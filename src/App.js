@@ -3,7 +3,7 @@ import React from "react";
 
 // ─── USUARIOS ───────────────────────────────────────────────────────────────
 const USUARIOS = [
-  { usuario: "admin",        password: "pvu2026",  nombre: "Administrador",      mail: "admin@tokin.com.ar",        rol: "admin" },
+  { usuario: "admin",        password: "pvu2026",  nombre: "Administrador",      mail: "gjromano@arcor.com",        rol: "admin" },
   { usuario: "operaciones",  password: "ops123",   nombre: "Equipo Operaciones",  mail: "operaciones@tokin.com.ar",  rol: "ops"   },
   { usuario: "comunicacion", password: "com123",   nombre: "Equipo Comunicación", mail: "comunicacion@tokin.com.ar", rol: "comms" },
   { usuario: "promociones",  password: "promo123", nombre: "Equipo Promociones",  mail: "promociones@tokin.com.ar",  rol: "promo" },
@@ -401,15 +401,7 @@ function Login({ onLogin }) {
           onMouseEnter={e=>e.currentTarget.style.opacity="0.9"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
           Ingresar
         </button>
-        <div style={{marginTop:28,padding:"14px 16px",background:"#f8fafc",borderRadius:10,border:"1px solid #e2e8f0"}}>
-          <div style={{fontSize:11,fontWeight:700,color:"#94a3b8",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:8}}>Usuarios de prueba</div>
-          {USUARIOS.map(u=>(
-            <div key={u.usuario} onClick={()=>{setUsuario(u.usuario);setPassword(u.password);setError("");}}
-              style={{fontSize:12,color:"#6366f1",cursor:"pointer",padding:"3px 0",fontWeight:500}}>
-              {u.usuario} <span style={{color:"#94a3b8"}}>→ {u.nombre} · {u.mail}</span>
-            </div>
-          ))}
-        </div>
+
       </div>
     </div>
   );
