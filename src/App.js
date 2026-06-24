@@ -1,6 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import React from "react";
 
+// Roboto font
+const _rf = document.createElement("link");
+_rf.rel = "stylesheet";
+_rf.href = "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap";
+document.head.appendChild(_rf);
+
+
 // ─── USUARIOS ───────────────────────────────────────────────────────────────
 const USUARIOS = [
   { usuario: "admin",        password: "pvu2026",  nombre: "Administrador",      mail: "gjromano@arcor.com",        rol: "admin" },
@@ -77,9 +84,9 @@ function generarAlertas() {
 }
 
 // ─── CONSTANTES VISUALES ─────────────────────────────────────────────────────
-const tipoConfig  = { "Regular":{"color":"#6366f1","bg":"#ede9fe"}, "Más por Menos":{"color":"#0ea5e9","bg":"#e0f2fe"}, "Progresiva":{"color":"#8b5cf6","bg":"#f5f3ff"} };
+const tipoConfig  = { "Regular":{"color":"#1E6FD9","bg":"#E8F0FE"}, "Más por Menos":{"color":"#0ea5e9","bg":"#e0f2fe"}, "Progresiva":{"color":"#1557B0","bg":"#F0F4FF"} };
 const estadoConfig= { activo:{"label":"Activo","color":"#16a34a","bg":"#f0fdf4","dot":"#16a34a"}, alerta:{"label":"Alerta cobertura","color":"#d97706","bg":"#fffbeb","dot":"#d97706"}, inactivo:{"label":"Programado","color":"#64748b","bg":"#f8fafc","dot":"#64748b"} };
-const prioConfig  = { critica:{"color":"#dc2626","bg":"#fef2f2","label":"Crítica"}, alta:{"color":"#d97706","bg":"#fffbeb","label":"Alta"}, media:{"color":"#6366f1","bg":"#ede9fe","label":"Media"}, info:{"color":"#16a34a","bg":"#f0fdf4","label":"Info"} };
+const prioConfig  = { critica:{"color":"#dc2626","bg":"#fef2f2","label":"Crítica"}, alta:{"color":"#d97706","bg":"#fffbeb","label":"Alta"}, media:{"color":"#1E6FD9","bg":"#E8F0FE","label":"Media"}, info:{"color":"#16a34a","bg":"#f0fdf4","label":"Info"} };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function generarPdvsFallidos(item) {
@@ -103,7 +110,7 @@ function descargarCSV(item) {
 
 // ─── COMPONENTES BASE ────────────────────────────────────────────────────────
 function CoverageBar({ value, estado }) {
-  const color = estado==="alerta"?"#f59e0b":estado==="inactivo"?"#cbd5e1":"#6366f1";
+  const color = estado==="alerta"?"#f59e0b":estado==="inactivo"?"#cbd5e1":"#1E6FD9";
   return (
     <div style={{display:"flex",alignItems:"center",gap:8}}>
       <div style={{flex:1,height:6,background:"#e2e8f0",borderRadius:99,overflow:"hidden"}}>
@@ -172,7 +179,7 @@ function CampanaNotificaciones({ alertas, onMarcarLeida, onMarcarTodas, userMail
               <div style={{fontSize:12,color:"#94a3b8",marginTop:2}}>Enviadas a {userMail}</div>
             </div>
             {noLeidas > 0 && (
-              <button onClick={onMarcarTodas} style={{fontSize:12,color:"#6366f1",background:"none",border:"none",cursor:"pointer",fontWeight:600}}>
+              <button onClick={onMarcarTodas} style={{fontSize:12,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontWeight:600}}>
                 Marcar todas como leídas
               </button>
             )}
@@ -195,7 +202,7 @@ function CampanaNotificaciones({ alertas, onMarcarLeida, onMarcarTodas, userMail
                       <span style={{fontSize:11,color:"#94a3b8"}}>{a.hora}</span>
                       <span style={{display:"inline-block",padding:"1px 7px",borderRadius:99,background:pc.bg,color:pc.color,fontSize:10,fontWeight:700}}>{pc.label}</span>
                       <button onClick={() => { simularMail(a); onMarcarLeida(a.id); }}
-                        style={{fontSize:11,color:"#6366f1",background:"none",border:"none",cursor:"pointer",fontWeight:600,padding:0}}>
+                        style={{fontSize:11,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontWeight:600,padding:0}}>
                         {mailEnviado === a.id ? "✅ Mail enviado" : "📧 Reenviar mail"}
                       </button>
                       {!a.leida && <button onClick={() => onMarcarLeida(a.id)} style={{fontSize:11,color:"#94a3b8",background:"none",border:"none",cursor:"pointer",padding:0}}>Marcar leída</button>}
@@ -228,7 +235,7 @@ function Row({ item, tipo }) {
           <div style={{fontWeight:600,fontSize:14,color:"#1e293b"}}>{item.nombre}</div>
           <div style={{fontSize:12,color:"#94a3b8",marginTop:3,display:"flex",alignItems:"center",gap:6}}>
             <span>{item.id}</span><span style={{color:"#e2e8f0"}}>·</span>
-            {tipo==="promo" ? <><TipoBadge tipo={item.tipo}/><span style={{color:"#cbd5e1"}}>·</span><span>{item.subtipo}</span></> : <span style={{fontWeight:500,color:"#6366f1"}}>{item.espacio}</span>}
+            {tipo==="promo" ? <><TipoBadge tipo={item.tipo}/><span style={{color:"#cbd5e1"}}>·</span><span>{item.subtipo}</span></> : <span style={{fontWeight:500,color:"#1E6FD9"}}>{item.espacio}</span>}
           </div>
         </td>
         <td style={{padding:"14px 16px"}}><Badge estado={item.estado}/></td>
@@ -307,7 +314,7 @@ function TabContent({ data, tipo, filtro }) {
   return (
     <div>
       <div style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
-        <KPICard label="Activos ahora"    value={activos}   accent="#6366f1"/>
+        <KPICard label="Activos ahora"    value={activos}   accent="#1E6FD9"/>
         <KPICard label="Con alerta"       value={alertas}   accent={alertas>0?"#d97706":"#16a34a"} sub={alertas>0?"Cobertura incompleta":"Todo OK"}/>
         <KPICard label="Programados"      value={programados} accent="#94a3b8" sub="próximos a activar"/>
         <KPICard label="PDVs activos"     value={totalPdvs.toLocaleString("es-AR")} accent="#0ea5e9" sub="recibiendo contenido"/>
@@ -320,12 +327,12 @@ function TabContent({ data, tipo, filtro }) {
           <input type="text" placeholder={tipo==="promo"?"Buscar por nombre, audiencia o ID...":"Buscar por nombre, espacio o audiencia..."} value={busqueda}
             onChange={e=>setBusqueda(e.target.value)}
             style={{width:"100%",padding:"9px 12px 9px 36px",border:"1px solid #e2e8f0",borderRadius:10,fontSize:14,color:"#1e293b",background:"#fff",outline:"none",boxSizing:"border-box"}}
-            onFocus={e=>e.target.style.borderColor="#6366f1"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
+            onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
         </div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
           {tiposActuales.map(t=>(
             <button key={t} onClick={()=>setTipoFiltro(t)}
-              style={{padding:"7px 13px",border:`1px solid ${tipoFiltro===t?"#6366f1":"#e2e8f0"}`,borderRadius:8,background:tipoFiltro===t?"#ede9fe":"#fff",color:tipoFiltro===t?"#6366f1":"#64748b",fontSize:13,fontWeight:tipoFiltro===t?600:400,cursor:"pointer",whiteSpace:"nowrap"}}>
+              style={{padding:"7px 13px",border:`1px solid ${tipoFiltro===t?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:tipoFiltro===t?"#E8F0FE":"#fff",color:tipoFiltro===t?"#1E6FD9":"#64748b",fontSize:13,fontWeight:tipoFiltro===t?600:400,cursor:"pointer",whiteSpace:"nowrap"}}>
               {t==="todos"?(tipo==="promo"?"Todos los tipos":"Todos los espacios"):t}
             </button>
           ))}
@@ -337,7 +344,7 @@ function TabContent({ data, tipo, filtro }) {
           {filtered.length} resultado{filtered.length!==1?"s":""}
           {busqueda&&<span> para <strong>"{busqueda}"</strong></span>}
           {tipoFiltro!=="todos"&&<span> · tipo <strong>{tipoFiltro}</strong></span>}
-          <button onClick={()=>{setBusqueda("");setTipoFiltro("todos");}} style={{marginLeft:10,color:"#6366f1",background:"none",border:"none",cursor:"pointer",fontSize:13,fontWeight:600}}>Limpiar filtros</button>
+          <button onClick={()=>{setBusqueda("");setTipoFiltro("todos");}} style={{marginLeft:10,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontSize:13,fontWeight:600}}>Limpiar filtros</button>
         </div>
       )}
 
@@ -371,10 +378,10 @@ function Login({ onLogin }) {
     if(u){onLogin(u);}else{setError("Usuario o contraseña incorrectos.");}
   };
   return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#ede9fe 0%,#e0f2fe 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Inter',system-ui,sans-serif"}}>
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#E8F0FE 0%,#e0f2fe 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Roboto',system-ui,sans-serif"}}>
       <div style={{background:"#fff",borderRadius:20,padding:"48px 44px",width:"100%",maxWidth:400,boxShadow:"0 8px 40px rgba(99,102,241,0.10)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:32}}>
-          <div style={{width:42,height:42,borderRadius:12,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>◎</div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={{fontSize:26,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.03em",fontFamily:"Roboto,sans-serif"}}>Tokin</span><span style={{width:8,height:8,borderRadius:"50%",background:"#1E6FD9",display:"inline-block",marginBottom:12}}></span></div>
           <div>
             <div style={{fontSize:17,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>Panel de Verdad Única</div>
             <div style={{fontSize:12,color:"#94a3b8"}}>Acceso interno</div>
@@ -384,20 +391,20 @@ function Login({ onLogin }) {
           <label style={{fontSize:13,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Usuario</label>
           <input type="text" value={usuario} onChange={e=>{setUsuario(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleSubmit()} placeholder="Tu usuario"
             style={{width:"100%",padding:"11px 14px",border:`1px solid ${error?"#fca5a5":"#e2e8f0"}`,borderRadius:10,fontSize:14,color:"#1e293b",outline:"none",boxSizing:"border-box"}}
-            onFocus={e=>e.target.style.borderColor="#6366f1"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
+            onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
         </div>
         <div style={{marginBottom:8}}>
           <label style={{fontSize:13,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Contraseña</label>
           <div style={{position:"relative"}}>
             <input type={verPass?"text":"password"} value={password} onChange={e=>{setPassword(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleSubmit()} placeholder="Tu contraseña"
               style={{width:"100%",padding:"11px 40px 11px 14px",border:`1px solid ${error?"#fca5a5":"#e2e8f0"}`,borderRadius:10,fontSize:14,color:"#1e293b",outline:"none",boxSizing:"border-box"}}
-              onFocus={e=>e.target.style.borderColor="#6366f1"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
+              onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
             <button onClick={()=>setVerPass(!verPass)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:15}}>{verPass?"🙈":"👁"}</button>
           </div>
         </div>
         {error&&<div style={{fontSize:13,color:"#dc2626",fontWeight:500,marginBottom:12,padding:"8px 12px",background:"#fef2f2",borderRadius:8,border:"1px solid #fecaca"}}>{error}</div>}
         <button onClick={handleSubmit}
-          style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",marginTop:8}}
+          style={{width:"100%",padding:"12px",background:"#1E6FD9",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",marginTop:8}}
           onMouseEnter={e=>e.currentTarget.style.opacity="0.9"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
           Ingresar
         </button>
@@ -471,19 +478,19 @@ function ResumenSemanal({ userMail }) {
         <div style={{display:"flex",gap:8}}>
           {[0,1].map(i => (
             <button key={i} onClick={()=>setSemana(i)}
-              style={{padding:"7px 16px",border:`1px solid ${semana===i?"#6366f1":"#e2e8f0"}`,borderRadius:8,background:semana===i?"#ede9fe":"#fff",color:semana===i?"#6366f1":"#64748b",fontSize:13,fontWeight:semana===i?700:400,cursor:"pointer"}}>
+              style={{padding:"7px 16px",border:`1px solid ${semana===i?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:semana===i?"#E8F0FE":"#fff",color:semana===i?"#1E6FD9":"#64748b",fontSize:13,fontWeight:semana===i?700:400,cursor:"pointer"}}>
               {semanas[i].label}
             </button>
           ))}
         </div>
         <button onClick={simularMail}
-          style={{display:"flex",alignItems:"center",gap:8,background:mailEnviado?"#16a34a":"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"#fff",border:"none",borderRadius:10,padding:"9px 20px",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.3s"}}>
+          style={{display:"flex",alignItems:"center",gap:8,background:mailEnviado?"#16a34a":"linear-gradient(135deg,#1E6FD9,#1557B0)",color:"#fff",border:"none",borderRadius:10,padding:"9px 20px",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all 0.3s"}}>
           {mailEnviado ? "✅ Resumen enviado" : "📧 Enviar resumen al equipo"}
         </button>
       </div>
 
       {/* Encabezado del resumen */}
-      <div style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:16,padding:"24px 28px",marginBottom:20,color:"#fff"}}>
+      <div style={{background:"linear-gradient(135deg,#1E6FD9,#1557B0)",borderRadius:16,padding:"24px 28px",marginBottom:20,color:"#fff"}}>
         <div style={{fontSize:12,fontWeight:600,opacity:0.8,letterSpacing:"0.06em",textTransform:"uppercase"}}>Resumen semanal · PVU</div>
         <div style={{fontSize:22,fontWeight:800,marginTop:4,letterSpacing:"-0.02em"}}>{s.rango}</div>
         <div style={{fontSize:13,opacity:0.75,marginTop:4}}>Enviado automáticamente a {userMail}</div>
@@ -492,7 +499,7 @@ function ResumenSemanal({ userMail }) {
       {/* KPIs */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
         {[
-          { label:"Ítems activos",       value:kpis.activos,                      accent:"#6366f1", sub:"en la plataforma" },
+          { label:"Ítems activos",       value:kpis.activos,                      accent:"#1E6FD9", sub:"en la plataforma" },
           { label:"Alertas disparadas",  value:kpis.alertas,                      accent:kpis.alertas>2?"#dc2626":"#d97706", sub:"durante la semana" },
           { label:"Cobertura promedio",  value:`${kpis.coberturaProm}%`,          accent:colorCobertura(kpis.coberturaProm), sub:"sobre ítems activos" },
           { label:"PDVs alcanzados",     value:kpis.pdvsAlcanzados.toLocaleString("es-AR"), accent:"#0ea5e9", sub:"recibieron contenido" },
@@ -574,9 +581,9 @@ const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
 const DIAS_SEMANA = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 
 const COLORES_TIPO = {
-  "Regular":           { bg:"#ede9fe", border:"#6366f1", text:"#4338ca" },
+  "Regular":           { bg:"#E8F0FE", border:"#1E6FD9", text:"#1245A8" },
   "Más por Menos":     { bg:"#e0f2fe", border:"#0ea5e9", text:"#0369a1" },
-  "Progresiva":        { bg:"#f5f3ff", border:"#8b5cf6", text:"#6d28d9" },
+  "Progresiva":        { bg:"#F0F4FF", border:"#1557B0", text:"#1557B0" },
   "Landing Tematizada":{ bg:"#fef9c3", border:"#eab308", text:"#854d0e" },
   "Pop Up":            { bg:"#fce7f3", border:"#ec4899", text:"#9d174d" },
   "Banner Hero":       { bg:"#ffedd5", border:"#f97316", text:"#9a3412" },
@@ -662,7 +669,7 @@ function CalendarioActivaciones() {
           <div style={{display:"flex",gap:6,padding:"12px 20px",borderBottom:"1px solid #f1f5f9",flexWrap:"wrap",alignItems:"center"}}>
             {[["todos","Todos"],["promos","Solo Promos"],["banners","Solo Espacios"]].map(([id,label])=>(
               <button key={id} onClick={()=>setFiltroTipo(id)}
-                style={{padding:"5px 12px",border:`1px solid ${filtroTipo===id?"#6366f1":"#e2e8f0"}`,borderRadius:8,background:filtroTipo===id?"#ede9fe":"#fff",color:filtroTipo===id?"#6366f1":"#64748b",fontSize:12,fontWeight:filtroTipo===id?700:400,cursor:"pointer"}}>
+                style={{padding:"5px 12px",border:`1px solid ${filtroTipo===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroTipo===id?"#E8F0FE":"#fff",color:filtroTipo===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroTipo===id?700:400,cursor:"pointer"}}>
                 {label}
               </button>
             ))}
@@ -689,9 +696,9 @@ function CalendarioActivaciones() {
                 <div key={idx} style={{minHeight:90,padding:"6px 4px",borderRight:"1px solid #f8fafc",borderBottom:"1px solid #f8fafc",background:!dia?"#fafbfc":solap?"#fefce8":hoyDia?"#f0f9ff":"#fff",position:"relative"}}>
                   {dia && (
                     <>
-                      <div style={{fontSize:12,fontWeight:hoyDia?800:400,color:hoyDia?"#6366f1":"#64748b",marginBottom:3,textAlign:"right",paddingRight:4}}>
+                      <div style={{fontSize:12,fontWeight:hoyDia?800:400,color:hoyDia?"#1E6FD9":"#64748b",marginBottom:3,textAlign:"right",paddingRight:4}}>
                         {hoyDia
-                          ? <span style={{background:"#6366f1",color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11}}>{dia}</span>
+                          ? <span style={{background:"#1E6FD9",color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11}}>{dia}</span>
                           : dia}
                       </div>
                       {items.slice(0,3).map(i=>{
@@ -823,7 +830,7 @@ function HistorialCampañas() {
       {/* KPIs */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
         {[
-          { label:"Campañas históricas", value:total,                              accent:"#6366f1" },
+          { label:"Campañas históricas", value:total,                              accent:"#1E6FD9" },
           { label:"Cobertura promedio",  value:`${cobProm}%`,                      accent:colorCobertura(cobProm) },
           { label:"Cobertura perfecta",  value:perfectas, sub:`${Math.round(perfectas/total*100)}% del total`, accent:"#16a34a" },
           { label:"PDVs totales",        value:totalPdvs.toLocaleString("es-AR"),  accent:"#0ea5e9", sub:"acumulado histórico" },
@@ -845,14 +852,14 @@ function HistorialCampañas() {
             <input type="text" placeholder="Buscar campaña, audiencia o ID..." value={busqueda}
               onChange={e=>setBusqueda(e.target.value)}
               style={{width:"100%",padding:"8px 12px 8px 36px",border:"1px solid #e2e8f0",borderRadius:8,fontSize:13,outline:"none",boxSizing:"border-box"}}
-              onFocus={e=>e.target.style.borderColor="#6366f1"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
+              onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
           </div>
 
           {/* Categoria */}
           <div style={{display:"flex",gap:6}}>
             {[["todos","Todas"],["promo","Promos"],["banner","Banners"]].map(([id,label])=>(
               <button key={id} onClick={()=>setFiltroCategoria(id)}
-                style={{padding:"6px 12px",border:`1px solid ${filtroCategoria===id?"#6366f1":"#e2e8f0"}`,borderRadius:8,background:filtroCategoria===id?"#ede9fe":"#fff",color:filtroCategoria===id?"#6366f1":"#64748b",fontSize:12,fontWeight:filtroCategoria===id?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>
+                style={{padding:"6px 12px",border:`1px solid ${filtroCategoria===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroCategoria===id?"#E8F0FE":"#fff",color:filtroCategoria===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroCategoria===id?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 {label}
               </button>
             ))}
@@ -862,7 +869,7 @@ function HistorialCampañas() {
           <div style={{display:"flex",gap:6}}>
             {[["todos","Todas"],["perfecta","Perfecta 100%"],["buena","Buena ≥85%"],["fallas","Con fallas"]].map(([id,label])=>(
               <button key={id} onClick={()=>setFiltroPerf(id)}
-                style={{padding:"6px 12px",border:`1px solid ${filtroPerf===id?"#6366f1":"#e2e8f0"}`,borderRadius:8,background:filtroPerf===id?"#ede9fe":"#fff",color:filtroPerf===id?"#6366f1":"#64748b",fontSize:12,fontWeight:filtroPerf===id?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>
+                style={{padding:"6px 12px",border:`1px solid ${filtroPerf===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroPerf===id?"#E8F0FE":"#fff",color:filtroPerf===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroPerf===id?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 {label}
               </button>
             ))}
@@ -887,7 +894,7 @@ function HistorialCampañas() {
         {filtered.length !== HISTORIAL_DATA.length && (
           <div style={{marginTop:10,fontSize:12,color:"#64748b"}}>
             Mostrando {filtered.length} de {HISTORIAL_DATA.length} campañas
-            <button onClick={()=>{setBusqueda("");setFiltroCategoria("todos");setFiltroPerf("todos");}} style={{marginLeft:10,color:"#6366f1",background:"none",border:"none",cursor:"pointer",fontSize:12,fontWeight:600}}>Limpiar filtros</button>
+            <button onClick={()=>{setBusqueda("");setFiltroCategoria("todos");setFiltroPerf("todos");}} style={{marginLeft:10,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontSize:12,fontWeight:600}}>Limpiar filtros</button>
           </div>
         )}
       </div>
@@ -986,7 +993,7 @@ function PanelAlertasMobile({ alertas, onMarcarLeida, onMarcarTodas, userMail })
           <div style={{fontWeight:700,fontSize:16,color:"#1e293b"}}>Notificaciones</div>
           <div style={{fontSize:12,color:"#94a3b8",marginTop:2}}>Enviadas a {userMail}</div>
         </div>
-        {noLeidas>0 && <button onClick={onMarcarTodas} style={{fontSize:13,color:"#6366f1",background:"#ede9fe",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontWeight:600}}>Marcar todas leídas</button>}
+        {noLeidas>0 && <button onClick={onMarcarTodas} style={{fontSize:13,color:"#1E6FD9",background:"#E8F0FE",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontWeight:600}}>Marcar todas leídas</button>}
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {alertas.map(a=>{
@@ -1000,7 +1007,7 @@ function PanelAlertasMobile({ alertas, onMarcarLeida, onMarcarTodas, userMail })
                 <div style={{display:"flex",alignItems:"center",gap:8,marginTop:8,flexWrap:"wrap"}}>
                   <span style={{fontSize:11,color:"#94a3b8"}}>{a.hora}</span>
                   <span style={{padding:"2px 8px",borderRadius:99,background:pc.bg,color:pc.color,fontSize:11,fontWeight:700}}>{pc.label}</span>
-                  {!a.leida && <button onClick={()=>onMarcarLeida(a.id)} style={{fontSize:12,color:"#6366f1",background:"none",border:"none",cursor:"pointer",fontWeight:600,padding:0}}>✓ Leída</button>}
+                  {!a.leida && <button onClick={()=>onMarcarLeida(a.id)} style={{fontSize:12,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontWeight:600,padding:0}}>✓ Leída</button>}
                 </div>
               </div>
             </div>
@@ -1048,7 +1055,7 @@ function PVU({ user, onLogout }) {
   const filtros = [{id:"todos",label:"Todos"},{id:"activo",label:"Activos"},{id:"alerta",label:"Alertas"},{id:"inactivo",label:"Programados"}];
 
   return (
-    <div style={{minHeight:"100vh",background:"#f1f5f9",fontFamily:"'Inter',system-ui,sans-serif",paddingBottom:64}}>
+    <div style={{minHeight:"100vh",background:"#F5F5F5",fontFamily:"'Roboto',system-ui,sans-serif",paddingBottom:64}}>
 
       {/* HEADER */}
       <div style={{background:"#fff",borderBottom:"1px solid #e2e8f0",padding:"0 32px",position:"sticky",top:0,zIndex:50}}>
@@ -1056,7 +1063,7 @@ function PVU({ user, onLogout }) {
           <div className="pvu-header-top" style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 0 0"}}>
 
             <div style={{display:"flex",alignItems:"center",gap:12}}>
-              <div style={{width:38,height:38,borderRadius:10,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>◎</div>
+              <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}><span style={{fontSize:22,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.03em",fontFamily:"Roboto,sans-serif"}}>Tokin</span><span style={{width:8,height:8,borderRadius:"50%",background:"#1E6FD9",display:"inline-block",marginBottom:10}}></span></div>
               <div>
                 <div style={{fontSize:18,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>Panel de Verdad Única</div>
                 <div className="pvu-logo-subtitle" style={{fontSize:12,color:"#94a3b8"}}>Estado en tiempo real</div>
@@ -1079,9 +1086,9 @@ function PVU({ user, onLogout }) {
           <div className="pvu-tabs" style={{display:"flex",gap:4,marginTop:20}}>
             {tabs.map(t=>(
               <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
-                style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:tab===t.id?700:500,color:tab===t.id?"#6366f1":"#64748b",borderBottom:tab===t.id?"2px solid #6366f1":"2px solid transparent",transition:"all 0.15s",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
+                style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:tab===t.id?700:500,color:tab===t.id?"#1E6FD9":"#64748b",borderBottom:tab===t.id?"2px solid #1E6FD9":"2px solid transparent",transition:"all 0.15s",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
                 {t.icon} {t.label}
-                {t.count!==null && <span style={{background:tab===t.id?"#ede9fe":"#f1f5f9",color:tab===t.id?"#6366f1":"#94a3b8",borderRadius:99,padding:"1px 8px",fontSize:11,fontWeight:700}}>{t.count}</span>}
+                {t.count!==null && <span style={{background:tab===t.id?"#E8F0FE":"#f1f5f9",color:tab===t.id?"#1E6FD9":"#94a3b8",borderRadius:99,padding:"1px 8px",fontSize:11,fontWeight:700}}>{t.count}</span>}
               </button>
             ))}
           </div>
@@ -1094,7 +1101,7 @@ function PVU({ user, onLogout }) {
           <div className="pvu-filtros" style={{display:"flex",gap:8,marginBottom:20}}>
             {filtros.map(f=>(
               <button key={f.id} onClick={()=>setFiltro(f.id)}
-                style={{padding:"6px 14px",border:`1px solid ${filtro===f.id?"#6366f1":"#e2e8f0"}`,borderRadius:8,background:filtro===f.id?"#ede9fe":"#fff",color:filtro===f.id?"#6366f1":"#64748b",fontSize:13,fontWeight:filtro===f.id?600:400,cursor:"pointer",whiteSpace:"nowrap"}}>
+                style={{padding:"6px 14px",border:`1px solid ${filtro===f.id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtro===f.id?"#E8F0FE":"#fff",color:filtro===f.id?"#1E6FD9":"#64748b",fontSize:13,fontWeight:filtro===f.id?600:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 {f.label}
               </button>
             ))}
@@ -1112,7 +1119,7 @@ function PVU({ user, onLogout }) {
           <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
             style={{flex:1,padding:"10px 4px 12px",border:"none",background:"transparent",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,position:"relative"}}>
             <span style={{fontSize:22}}>{t.icon}</span>
-            <span style={{fontSize:10,fontWeight:tab===t.id?700:400,color:tab===t.id?"#6366f1":"#94a3b8"}}>{t.label}</span>
+            <span style={{fontSize:10,fontWeight:tab===t.id?700:400,color:tab===t.id?"#1E6FD9":"#94a3b8"}}>{t.label}</span>
             {t.count && <span style={{position:"absolute",top:6,right:"calc(50% - 18px)",background:"#dc2626",color:"#fff",borderRadius:99,fontSize:9,fontWeight:800,minWidth:14,height:14,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 3px"}}>{t.count}</span>}
           </button>
         ))}
