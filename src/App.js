@@ -1365,7 +1365,6 @@ function PVU({ user, onLogout }) {
     { id:"banners",    label:"Espacios",   icon:"📢",  count:BANNERS.length },
     { id:"calendario", label:"Calendario", icon:"📅",  count:null },
     { id:"historial",  label:"Historial",  icon:"📊",  count:null },
-    { id:"distribuidores", label:"Distribuidores", icon:"🚚", count:null },
   ];
   const filtros = [{id:"todos",label:"Todos"},{id:"activo",label:"Activos"},{id:"alerta",label:"Alertas"},{id:"inactivo",label:"Programados"}];
 
@@ -1412,7 +1411,7 @@ function PVU({ user, onLogout }) {
 
       {/* CONTENIDO */}
       <div className="pvu-content" style={{maxWidth:1200,margin:"0 auto",padding:"28px 32px"}}>
-        {tab!=="calendario" && tab!=="alertas" && (
+        {tab!=="calendario" && tab!=="alertas" && tab!=="historial" && tab!=="distribuidores" && (
           <div className="pvu-filtros" style={{display:"flex",gap:8,marginBottom:20}}>
             {filtros.map(f=>(
               <button key={f.id} onClick={()=>setFiltro(f.id)}
@@ -1422,11 +1421,16 @@ function PVU({ user, onLogout }) {
             ))}
           </div>
         )}
+        {tab==="historial" && (
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:20,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>Historial de promociones finalizadas</div>
+            <div style={{fontSize:13,color:"#94a3b8",marginTop:4}}>Cobertura y datos de venta de campañas cerradas</div>
+          </div>
+        )}
         {tab==="promos"     && <TabContent data={PROMOS}  tipo="promo"  filtro={filtro}/>}
         {tab==="banners"    && <TabContent data={BANNERS} tipo="banner" filtro={filtro}/>}
         {tab==="calendario" && <CalendarioActivaciones/>}
         {tab==="historial"  && <HistorialCampañas/>}
-        {tab==="distribuidores" && <CoberturaPorDistribuidor/>}
       </div>
 
       {/* NAV INFERIOR MOBILE */}
