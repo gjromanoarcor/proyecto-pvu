@@ -1037,7 +1037,7 @@ function HistorialCampañas() {
         {filtered.length !== HISTORIAL_DATA.length && (
           <div style={{marginTop:10,fontSize:12,color:"#64748b"}}>
             Mostrando {filtered.length} de {HISTORIAL_DATA.length} campañas
-            <button onClick={()=>{setBusqueda("");setFiltroCategoria("todos");setFiltroPerf("todos");}} style={{marginLeft:10,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontSize:12,fontWeight:600}}>Limpiar filtros</button>
+            <button onClick={()=>{setBusqueda("");setFiltroCategoria("todos");}} style={{marginLeft:10,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontSize:12,fontWeight:600}}>Limpiar filtros</button>
           </div>
         )}
       </div>
