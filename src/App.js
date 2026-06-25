@@ -957,6 +957,146 @@ function HistorialCampañas() {
   );
 }
 
+// ─── COBERTURA POR DISTRIBUIDOR ──────────────────────────────────────────────
+const DISTRIBUIDORES_DATA = [
+  { id:"tokin0023", nombre:"Dist. Norte SA",         pdvsTotal:380, pdvsFalla:280, zona:"GBA Norte"   },
+  { id:"tokin0045", nombre:"Logística Sur SRL",      pdvsTotal:210, pdvsFalla:190, zona:"GBA Sur"     },
+  { id:"tokin0012", nombre:"Reparto Centro SA",       pdvsTotal:450, pdvsFalla:120, zona:"CABA"       },
+  { id:"tokin0078", nombre:"Dist. Litoral SRL",      pdvsTotal:320, pdvsFalla:90,  zona:"Litoral"     },
+  { id:"tokin0091", nombre:"Transportes del Este",   pdvsTotal:180, pdvsFalla:80,  zona:"NOA"        },
+  { id:"tokin0034", nombre:"Dist. Cuyo SA",          pdvsTotal:290, pdvsFalla:40,  zona:"Cuyo"       },
+  { id:"tokin0156", nombre:"Logística Patagonia",    pdvsTotal:150, pdvsFalla:20,  zona:"Patagonia"  },
+  { id:"tokin0067", nombre:"Reparto Córdoba SRL",    pdvsTotal:410, pdvsFalla:10,  zona:"Centro"     },
+  { id:"tokin0103", nombre:"Dist. NEA SA",           pdvsTotal:260, pdvsFalla:0,   zona:"NEA"        },
+  { id:"tokin0144", nombre:"Transportes Rosario",    pdvsTotal:340, pdvsFalla:0,   zona:"Litoral"    },
+];
+
+function CoberturaPorDistribuidor() {
+  const [itemFoco, setItemFoco] = useState(null);
+  const [ordenar, setOrdenar]   = useState("fallas");
+
+  const totalFallas = DISTRIBUIDORES_DATA.reduce((a,d) => a + d.pdvsFalla, 0);
+  const totalPdvs   = DISTRIBUIDORES_DATA.reduce((a,d) => a + d.pdvsTotal, 0);
+  const conFallas   = DISTRIBUIDORES_DATA.filter(d => d.pdvsFalla > 0).length;
+
+  const sorted = [...DISTRIBUIDORES_DATA].sort((a,b) =>
+    ordenar === "fallas" ? b.pdvsFalla - a.pdvsFalla :
+    ordenar === "cobertura" ? (a.pdvsFalla/a.pdvsTotal) - (b.pdvsFalla/b.pdvsTotal) :
+    a.nombre.localeCompare(b.nombre)
+  );
+
+  const colorFalla = (pct) =>
+    pct === 0 ? "#16a34a" : pct < 30 ? "#d97706" : "#dc2626";
+  const bgFalla = (pct) =>
+    pct === 0 ? "#f0fdf4" : pct < 30 ? "#fffbeb" : "#fef2f2";
+  const labelFalla = (pct) =>
+    pct === 0 ? "OK" : pct < 30 ? "Atención" : "Crítico";
+
+  return (
+    <div>
+      {/* KPIs resumen */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
+        {[
+          { label:"PDVs con falla",      value:totalFallas.toLocaleString("es-AR"), accent:"#dc2626", sub:"en toda la red" },
+          { label:"Distribuidores afectados", value:`${conFallas} de ${DISTRIBUIDORES_DATA.length}`, accent:"#d97706", sub:"con al menos 1 PDV fallido" },
+          { label:"Cobertura red",        value:`${Math.round((1 - totalFallas/totalPdvs)*100)}%`, accent:"#1E6FD9", sub:"promedio general" },
+        ].map(k => (
+          <div key={k.label} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:12,padding:"16px 18px"}}>
+            <div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>{k.label}</div>
+            <div style={{fontSize:26,fontWeight:800,color:k.accent,lineHeight:1}}>{k.value}</div>
+            <div style={{fontSize:11,color:"#64748b",marginTop:4}}>{k.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Ordenar */}
+      <div style={{display:"flex",gap:8,marginBottom:16,alignItems:"center"}}>
+        <span style={{fontSize:12,color:"#94a3b8",fontWeight:600}}>Ordenar por:</span>
+        {[["fallas","Mayor cantidad de fallas"],["cobertura","Peor cobertura"],["nombre","Nombre"]].map(([id,label]) => (
+          <button key={id} onClick={() => setOrdenar(id)}
+            style={{padding:"5px 12px",border:`1px solid ${ordenar===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:ordenar===id?"#E8F0FE":"#fff",color:ordenar===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:ordenar===id?700:400,cursor:"pointer"}}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Lista de distribuidores */}
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {sorted.map(d => {
+          const pctFalla = Math.round((d.pdvsFalla / d.pdvsTotal) * 100);
+          const pctOk    = 100 - pctFalla;
+          const color    = colorFalla(pctFalla);
+          const bg       = bgFalla(pctFalla);
+          const esFoco   = itemFoco === d.id;
+
+          return (
+            <div key={d.id}
+              onClick={() => setItemFoco(esFoco ? null : d.id)}
+              style={{background:"#fff",border:`1.5px solid ${esFoco ? "#1E6FD9" : "#e2e8f0"}`,borderRadius:12,padding:"14px 18px",cursor:"pointer",transition:"all 0.15s"}}
+              onMouseEnter={e => { if (!esFoco) e.currentTarget.style.borderColor = "#c3d9f7"; }}
+              onMouseLeave={e => { if (!esFoco) e.currentTarget.style.borderColor = "#e2e8f0"; }}>
+
+              <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                {/* Nombre y zona */}
+                <div style={{flex:1,minWidth:160}}>
+                  <div style={{fontWeight:700,fontSize:14,color:"#1e293b"}}>{d.nombre}</div>
+                  <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{d.id} · {d.zona}</div>
+                </div>
+
+                {/* Barra de cobertura */}
+                <div style={{flex:2,minWidth:180}}>
+                  <div style={{height:8,background:"#e2e8f0",borderRadius:99,overflow:"hidden",display:"flex"}}>
+                    <div style={{width:`${pctOk}%`,height:"100%",background:"#1E6FD9",transition:"width 0.5s ease"}}/>
+                    {pctFalla > 0 && <div style={{width:`${pctFalla}%`,height:"100%",background:color}}/>}
+                  </div>
+                  <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+                    <span style={{fontSize:10,color:"#64748b"}}>{d.pdvsTotal - d.pdvsFalla} OK</span>
+                    {pctFalla > 0 && <span style={{fontSize:10,color,fontWeight:600}}>{d.pdvsFalla} con falla</span>}
+                  </div>
+                </div>
+
+                {/* Badge estado */}
+                <div style={{padding:"4px 12px",borderRadius:99,background:bg,color,fontSize:12,fontWeight:700,border:`1px solid ${color}33`,whiteSpace:"nowrap"}}>
+                  {pctFalla === 0 ? "✓ Sin fallas" : `${pctFalla}% ${labelFalla(pctFalla)}`}
+                </div>
+              </div>
+
+              {/* Detalle expandido */}
+              {esFoco && d.pdvsFalla > 0 && (
+                <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid #f1f5f9",display:"flex",gap:24,flexWrap:"wrap",alignItems:"center"}}>
+                  <div>
+                    <div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>PDVs totales</div>
+                    <div style={{fontSize:16,fontWeight:700,color:"#1e293b",marginTop:2}}>{d.pdvsTotal.toLocaleString("es-AR")}</div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>PDVs con falla</div>
+                    <div style={{fontSize:16,fontWeight:700,color,marginTop:2}}>{d.pdvsFalla.toLocaleString("es-AR")}</div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>Zona</div>
+                    <div style={{fontSize:16,fontWeight:700,color:"#1e293b",marginTop:2}}>{d.zona}</div>
+                  </div>
+                  <div style={{marginLeft:"auto"}}>
+                    <div style={{fontSize:12,color:"#94a3b8",marginBottom:6}}>Acción recomendada:</div>
+                    <div style={{fontSize:13,fontWeight:600,color:"#1e293b",background:"#F5F7FA",padding:"8px 14px",borderRadius:8,border:"1px solid #e2e8f0"}}>
+                      📞 Contactar a <strong>{d.nombre}</strong> — {d.pdvsFalla} PDVs sin cobertura en {d.zona}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {esFoco && d.pdvsFalla === 0 && (
+                <div style={{marginTop:12,paddingTop:12,borderTop:"1px solid #f1f5f9",fontSize:13,color:"#16a34a",fontWeight:600}}>
+                  ✅ Todos los PDVs de este distribuidor están recibiendo el contenido correctamente.
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── MOBILE STYLES ───────────────────────────────────────────────────────────
 const mobileStyles = `
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -1054,6 +1194,7 @@ function PVU({ user, onLogout }) {
     { id:"banners",    label:"Espacios",   icon:"📢",  count:BANNERS.length },
     { id:"calendario", label:"Calendario", icon:"📅",  count:null },
     { id:"historial",  label:"Historial",  icon:"📊",  count:null },
+    { id:"distribuidores", label:"Distribuidores", icon:"🚚", count:null },
   ];
   const filtros = [{id:"todos",label:"Todos"},{id:"activo",label:"Activos"},{id:"alerta",label:"Alertas"},{id:"inactivo",label:"Programados"}];
 
@@ -1114,6 +1255,7 @@ function PVU({ user, onLogout }) {
         {tab==="banners"    && <TabContent data={BANNERS} tipo="banner" filtro={filtro}/>}
         {tab==="calendario" && <CalendarioActivaciones/>}
         {tab==="historial"  && <HistorialCampañas/>}
+        {tab==="distribuidores" && <CoberturaPorDistribuidor/>}
       </div>
 
       {/* NAV INFERIOR MOBILE */}
