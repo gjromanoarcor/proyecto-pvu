@@ -938,162 +938,182 @@ function CalendarioActivaciones() {
 }
 
 // ─── HISTORIAL DE CAMPAÑAS ───────────────────────────────────────────────────
-const HISTORIAL_DATA = [
-  { id:"PROMO-H001", nombre:"20% OFF Bebidas Invierno",        tipo:"Regular",       subtipo:"Descuento %",       categoria:"promo",  audiencia:"Kioscos del Litoral",               inicio:"2026-05-01", fin:"2026-05-31", pdvsSegmento:1240, pdvsAlcanzados:1203, cobertura:97, duracion:30, detalle:"Descuento en bebidas calientes para temporada invierno" },
-  { id:"PROMO-H002", nombre:"2x1 Yerba Mate",                  tipo:"Más por Menos", subtipo:"2x1",               categoria:"promo",  audiencia:"Almacenes Cat. A y B1",             inicio:"2026-05-10", fin:"2026-05-20", pdvsSegmento:3800, pdvsAlcanzados:3800, cobertura:100, duracion:10, detalle:"2x1 en todas las marcas de yerba mate" },
-  { id:"PROMO-H003", nombre:"Progresiva Galletitas",           tipo:"Progresiva",    subtipo:"10u→10% / 20u→25%", categoria:"promo",  audiencia:"Dietéticas GBA Norte",              inicio:"2026-05-15", fin:"2026-06-01", pdvsSegmento:520,  pdvsAlcanzados:468,  cobertura:90, duracion:17, detalle:"Descuento progresivo en galletitas premium" },
-  { id:"PROMO-H004", nombre:"3x2 Jugos",                       tipo:"Más por Menos", subtipo:"3x2",               categoria:"promo",  audiencia:"Estaciones de Servicio YPF Propias",inicio:"2026-04-01", fin:"2026-04-30", pdvsSegmento:890,  pdvsAlcanzados:712,  cobertura:80, duracion:30, detalle:"3x2 en jugos de 1 litro seleccionados" },
-  { id:"PROMO-H005", nombre:"15% OFF Chocolates",              tipo:"Regular",       subtipo:"Descuento %",       categoria:"promo",  audiencia:"Kioscos Acuerdo Comercial XYZ",     inicio:"2026-04-10", fin:"2026-04-20", pdvsSegmento:2100, pdvsAlcanzados:2100, cobertura:100, duracion:10, detalle:"15% en toda la línea de chocolates" },
-  { id:"PROMO-H006", nombre:"4x3 Agua Mineral",                tipo:"Más por Menos", subtipo:"4x3",               categoria:"promo",  audiencia:"Establecimientos Educativos",        inicio:"2026-03-01", fin:"2026-03-31", pdvsSegmento:670,  pdvsAlcanzados:536,  cobertura:80, duracion:31, detalle:"4x3 en agua mineral 500ml" },
-  { id:"BAN-H001",   nombre:"Landing Día de la Madre",         tipo:"Landing Tematizada", subtipo:"Landing",      categoria:"banner", audiencia:"Todos los PDVs",                    inicio:"2026-05-20", fin:"2026-05-26", pdvsSegmento:12400,pdvsAlcanzados:12400,cobertura:100, duracion:6,  detalle:"Landing especial para el día de la madre" },
-  { id:"BAN-H002",   nombre:"Hero — Campaña Otoño",            tipo:"Banner Hero",   subtipo:"Hero",              categoria:"banner", audiencia:"Almacenes Cat. A y B1",             inicio:"2026-04-01", fin:"2026-05-31", pdvsSegmento:3800, pdvsAlcanzados:3496, cobertura:92, duracion:61, detalle:"Banner principal campaña otoño-invierno" },
-  { id:"BAN-H003",   nombre:"Pop Up — Acuerdo Banco XYZ",      tipo:"Pop Up",        subtipo:"Pop Up",            categoria:"banner", audiencia:"Kioscos Acuerdo Comercial XYZ",     inicio:"2026-03-15", fin:"2026-04-15", pdvsSegmento:2100, pdvsAlcanzados:1680, cobertura:80, duracion:31, detalle:"Pop up de activación acuerdo banco" },
-  { id:"BAN-H004",   nombre:"Top Bar — Semana Santa",          tipo:"Top Bar",       subtipo:"Top Bar",           categoria:"banner", audiencia:"Todos los PDVs",                    inicio:"2026-03-28", fin:"2026-04-02", pdvsSegmento:12400,pdvsAlcanzados:12400,cobertura:100, duracion:5,  detalle:"Comunicación especial semana santa" },
-  { id:"BAN-H005",   nombre:"Banner Search — Yerba Mate",      tipo:"Banner Search", subtipo:"Search",            categoria:"banner", audiencia:"Almacenes Cat. A y B1",             inicio:"2026-05-10", fin:"2026-05-20", pdvsSegmento:3800, pdvsAlcanzados:2888, cobertura:76, duracion:10, detalle:"Banner en búsquedas de categoría infusiones" },
-  { id:"BAN-H006",   nombre:"Banner Cart — Chocolates",        tipo:"Banner Cart",   subtipo:"Cart",              categoria:"banner", audiencia:"Kioscos Acuerdo Comercial XYZ",     inicio:"2026-04-10", fin:"2026-04-20", pdvsSegmento:2100, pdvsAlcanzados:2100, cobertura:100, duracion:10, detalle:"Banner en carrito recordando promo chocolates" },
+const HISTORIAL_PROMOS = [
+  { id:"PROMO-H001", nombre:"2x1 Traviata Porteñitas",      negocio:"Harinas",    tipo:"Más por Menos", subtipo:"2x1",         audiencia:"Todos los canales",          inicio:"2026-05-01", fin:"2026-05-31", pdvsSegmento:8400, pdvsAlcanzados:8316, cobertura:99, duracion:30, pedidos:1842, unidades:28640, bultos:952, kilos:2748 },
+  { id:"PROMO-H002", nombre:"15% OFF Cofler Rellenas",      negocio:"Chocolates", tipo:"Regular",       subtipo:"Descuento %",  audiencia:"Todos los canales",          inicio:"2026-05-01", fin:"2026-05-31", pdvsSegmento:8400, pdvsAlcanzados:7980, cobertura:95, duracion:30, pedidos:2103, unidades:43200, bultos:1600, kilos:3715 },
+  { id:"PROMO-H003", nombre:"Progresiva Galletitas",        negocio:"Alimentos",  tipo:"Progresiva",    subtipo:"10u→10%/20u→25%", audiencia:"Dietéticas GBA Norte",   inicio:"2026-05-15", fin:"2026-06-01", pdvsSegmento:520,  pdvsAlcanzados:468,  cobertura:90, duracion:17, pedidos:312,  unidades:8900,  bultos:420,  kilos:980  },
+  { id:"PROMO-H004", nombre:"3x2 Jugos",                    negocio:"Alimentos",  tipo:"Más por Menos", subtipo:"3x2",          audiencia:"Estaciones de Servicio YPF", inicio:"2026-04-01", fin:"2026-04-30", pdvsSegmento:890,  pdvsAlcanzados:712,  cobertura:80, duracion:30, pedidos:540,  unidades:14200, bultos:710,  kilos:2130 },
+  { id:"PROMO-H005", nombre:"15% OFF Chocolates Águila",    negocio:"Chocolates", tipo:"Regular",       subtipo:"Descuento %",  audiencia:"Kioscos Acuerdo XYZ",        inicio:"2026-04-10", fin:"2026-04-20", pdvsSegmento:2100, pdvsAlcanzados:2100, cobertura:100,duracion:10, pedidos:890,  unidades:19800, bultos:825,  kilos:1683 },
+  { id:"PROMO-H006", nombre:"4x3 Agua Mineral",             negocio:"Alimentos",  tipo:"Más por Menos", subtipo:"4x3",          audiencia:"Establecimientos Educativos",inicio:"2026-03-01", fin:"2026-03-31", pdvsSegmento:670,  pdvsAlcanzados:536,  cobertura:80, duracion:31, pedidos:421,  unidades:11200, bultos:620,  kilos:5600 },
+  { id:"PROMO-H007", nombre:"2x1 Mogul Masti Mayo",         negocio:"Golosinas",  tipo:"Más por Menos", subtipo:"2x1",          audiencia:"Todos los canales",          inicio:"2026-05-01", fin:"2026-05-31", pdvsSegmento:8400, pdvsAlcanzados:8400, cobertura:100,duracion:30, pedidos:3210, unidades:67000, bultos:2790, kilos:4020 },
+  { id:"PROMO-H008", nombre:"20% OFF Saladix Abril",        negocio:"Alimentos",  tipo:"Regular",       subtipo:"Descuento %",  audiencia:"Todos los canales",          inicio:"2026-04-01", fin:"2026-04-30", pdvsSegmento:8400, pdvsAlcanzados:6720, cobertura:80, duracion:30, pedidos:1580, unidades:38400, bultos:1600, kilos:3072 },
+];
+
+const HISTORIAL_BANNERS = [
+  { id:"BAN-H001", nombre:"Landing Día de la Madre",        espacio:"Landing Tematizada", audiencia:"Todos los PDVs",           inicio:"2026-05-20", fin:"2026-05-26", pdvsSegmento:12400, pdvsAlcanzados:12400, cobertura:100, duracion:6  },
+  { id:"BAN-H002", nombre:"Hero — Campaña Otoño",           espacio:"Banner Hero",        audiencia:"Almacenes Cat. A y B1",    inicio:"2026-04-01", fin:"2026-05-31", pdvsSegmento:3800,  pdvsAlcanzados:3496,  cobertura:92,  duracion:61 },
+  { id:"BAN-H003", nombre:"Pop Up — Acuerdo Banco XYZ",     espacio:"Pop Up",             audiencia:"Kioscos Acuerdo XYZ",      inicio:"2026-03-15", fin:"2026-04-15", pdvsSegmento:2100,  pdvsAlcanzados:1680,  cobertura:80,  duracion:31 },
+  { id:"BAN-H004", nombre:"Top Bar — Semana Santa",         espacio:"Top Bar",            audiencia:"Todos los PDVs",           inicio:"2026-03-28", fin:"2026-04-02", pdvsSegmento:12400, pdvsAlcanzados:12400, cobertura:100, duracion:5  },
+  { id:"BAN-H005", nombre:"Banner Search — Yerba Mate",     espacio:"Banner Search",      audiencia:"Almacenes Cat. A y B1",    inicio:"2026-05-10", fin:"2026-05-20", pdvsSegmento:3800,  pdvsAlcanzados:2888,  cobertura:76,  duracion:10 },
+  { id:"BAN-H006", nombre:"Banner Cart — Chocolates",       espacio:"Banner Cart",        audiencia:"Kioscos Acuerdo XYZ",      inicio:"2026-04-10", fin:"2026-04-20", pdvsSegmento:2100,  pdvsAlcanzados:2100,  cobertura:100, duracion:10 },
 ];
 
 function HistorialCampañas() {
-  const [busqueda, setBusqueda]     = useState("");
-  const [filtroCategoria, setFiltroCategoria] = useState("todos");
+  const [subTab, setSubTab]       = useState("promos");
+  const [busqueda, setBusqueda]   = useState("");
 
-  const colorCobertura = v => v===100?"#16a34a":v>=85?"#d97706":"#dc2626";
-  const bgCobertura    = v => v===100?"#f0fdf4":v>=85?"#fffbeb":"#fef2f2";
-  const labelPerf      = v => v===100?"Perfecta":v>=85?"Buena":"Con fallas";
+  const colorCob = v => v===100?"#16a34a":v>=85?"#d97706":"#dc2626";
+  const bgCob    = v => v===100?"#f0fdf4":v>=85?"#fffbeb":"#fef2f2";
 
-  const descargarCSV = () => {
-    const header = "id,nombre,tipo,categoria,audiencia,inicio,fin,duracion,pdvsSegmento,pdvsAlcanzados,cobertura";
-    const filas = HISTORIAL_DATA.map(i =>
-      `${i.id},"${i.nombre}","${i.tipo}","${i.categoria}","${i.audiencia}",${i.inicio},${i.fin},${i.duracion},${i.pdvsSegmento},${i.pdvsAlcanzados},${i.cobertura}%`
-    );
-    const csv = [header,...filas].join("\n");
-    const a = Object.assign(document.createElement("a"),{href:URL.createObjectURL(new Blob([csv],{type:"text/csv"})),download:"historial_campanas_pvu.csv"});
-    a.click();
-  };
+  const NEGOCIO_C = { "Alimentos":{bg:"#e0f2fe",border:"#0ea5e9",text:"#0369a1"}, "Chocolates":{bg:"#fce7f3",border:"#ec4899",text:"#9d174d"}, "Golosinas":{bg:"#fef9c3",border:"#eab308",text:"#854d0e"}, "Helados":{bg:"#ede9fe",border:"#8b5cf6",text:"#6d28d9"}, "Harinas":{bg:"#ffedd5",border:"#f97316",text:"#9a3412"} };
+  const ESPACIO_C = { "Landing Tematizada":{bg:"#f0fdf4",border:"#16a34a",text:"#166534"}, "Pop Up":{bg:"#fce7f3",border:"#ec4899",text:"#9d174d"}, "Banner Hero":{bg:"#ffedd5",border:"#f97316",text:"#9a3412"}, "Banner Search":{bg:"#d1fae5",border:"#10b981",text:"#065f46"}, "Banner Cart":{bg:"#e0f2fe",border:"#38bdf8",text:"#075985"}, "Banner Novedades":{bg:"#f1f5f9",border:"#64748b",text:"#334155"}, "Top Bar":{bg:"#fdf2f8",border:"#d946ef",text:"#86198f"} };
 
-  const filtered = HISTORIAL_DATA
-    .filter(i => filtroCategoria==="todos" || i.categoria===filtroCategoria)
-
-    .filter(i => {
-      if (!busqueda) return true;
-      const q = busqueda.toLowerCase();
-      return i.nombre.toLowerCase().includes(q) || i.audiencia.toLowerCase().includes(q) || i.id.toLowerCase().includes(q);
-    })
-    .sort((a,b) => b.inicio.localeCompare(a.inicio));
-
-  // KPIs globales
-  const total        = HISTORIAL_DATA.length;
-  const cobProm      = Math.round(HISTORIAL_DATA.reduce((a,i)=>a+i.cobertura,0)/total);
-  const perfectas    = HISTORIAL_DATA.filter(i=>i.cobertura===100).length;
-  const conFallas    = HISTORIAL_DATA.filter(i=>i.cobertura<85).length;
-  const totalPdvs    = HISTORIAL_DATA.reduce((a,i)=>a+i.pdvsAlcanzados,0);
+  const filtrarPromos  = HISTORIAL_PROMOS.filter(i => !busqueda || i.nombre.toLowerCase().includes(busqueda.toLowerCase()) || i.negocio.toLowerCase().includes(busqueda.toLowerCase()));
+  const filtrarBanners = HISTORIAL_BANNERS.filter(i => !busqueda || i.nombre.toLowerCase().includes(busqueda.toLowerCase()) || i.espacio.toLowerCase().includes(busqueda.toLowerCase()));
 
   return (
     <div>
-      {/* KPIs */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
-        {[
-          { label:"Campañas históricas", value:total,                              accent:"#1E6FD9" },
-          { label:"Cobertura promedio",  value:`${cobProm}%`,                      accent:colorCobertura(cobProm) },
-          { label:"Cobertura perfecta",  value:perfectas, sub:`${Math.round(perfectas/total*100)}% del total`, accent:"#16a34a" },
-          { label:"PDVs totales",        value:totalPdvs.toLocaleString("es-AR"),  accent:"#0ea5e9", sub:"acumulado histórico" },
-        ].map(k=>(
-          <div key={k.label} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:12,padding:"16px 18px"}}>
-            <div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>{k.label}</div>
-            <div style={{fontSize:24,fontWeight:800,color:k.accent,lineHeight:1}}>{k.value}</div>
-            {k.sub && <div style={{fontSize:11,color:"#64748b",marginTop:4}}>{k.sub}</div>}
-          </div>
+      {/* Sub-tabs */}
+      <div style={{display:"flex",gap:4,marginBottom:20,borderBottom:"1px solid #e2e8f0",paddingBottom:0}}>
+        {[["promos","🏷 Promociones finalizadas",HISTORIAL_PROMOS.length],["banners","📢 Espacios finalizados",HISTORIAL_BANNERS.length]].map(([id,label,count])=>(
+          <button key={id} onClick={()=>{setSubTab(id);setBusqueda("");}}
+            style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:subTab===id?700:500,color:subTab===id?"#1E6FD9":"#64748b",borderBottom:subTab===id?"2px solid #1E6FD9":"2px solid transparent",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
+            {label}
+            <span style={{background:subTab===id?"#E8F0FE":"#f1f5f9",color:subTab===id?"#1E6FD9":"#94a3b8",borderRadius:99,padding:"1px 8px",fontSize:11,fontWeight:700}}>{count}</span>
+          </button>
         ))}
       </div>
 
-      {/* Filtros y búsqueda */}
-      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:"16px 20px",marginBottom:16}}>
-        <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center"}}>
-          {/* Buscador */}
-          <div style={{position:"relative",flex:1,minWidth:200}}>
-            <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:"#94a3b8",fontSize:15,pointerEvents:"none"}}>🔍</span>
-            <input type="text" placeholder="Buscar campaña, audiencia o ID..." value={busqueda}
-              onChange={e=>setBusqueda(e.target.value)}
-              style={{width:"100%",padding:"8px 12px 8px 36px",border:"1px solid #e2e8f0",borderRadius:8,fontSize:13,outline:"none",boxSizing:"border-box"}}
-              onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
-          </div>
+      {/* Buscador */}
+      <div style={{position:"relative",marginBottom:16,maxWidth:400}}>
+        <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:"#94a3b8",fontSize:15,pointerEvents:"none"}}>🔍</span>
+        <input type="text" placeholder="Buscar..." value={busqueda} onChange={e=>setBusqueda(e.target.value)}
+          style={{width:"100%",padding:"9px 12px 9px 36px",border:"1px solid #e2e8f0",borderRadius:10,fontSize:13,outline:"none",boxSizing:"border-box"}}
+          onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
+      </div>
 
-          {/* Categoria */}
-          <div style={{display:"flex",gap:6}}>
-            {[["todos","Todas"],["promo","Promos"],["banner","Banners"]].map(([id,label])=>(
-              <button key={id} onClick={()=>setFiltroCategoria(id)}
-                style={{padding:"6px 12px",border:`1px solid ${filtroCategoria===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroCategoria===id?"#E8F0FE":"#fff",color:filtroCategoria===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroCategoria===id?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>
-                {label}
-              </button>
-            ))}
-          </div>
-          {/* Exportar */}
-          <button onClick={descargarCSV}
-            style={{display:"flex",alignItems:"center",gap:6,background:"#1e293b",color:"#fff",border:"none",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
-            ⬇ Exportar CSV
-          </button>
+      {/* ── PROMOS ── */}
+      {subTab==="promos" && (
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {filtrarPromos.map(item => {
+            const nc = NEGOCIO_C[item.negocio]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
+            const cc = colorCob(item.cobertura);
+            const bc = bgCob(item.cobertura);
+            return (
+              <div key={item.id} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+                {/* Header card */}
+                <div style={{padding:"14px 20px",borderBottom:"1px solid #f1f5f9",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:700,fontSize:15,color:"#1e293b"}}>{item.nombre}</div>
+                    <div style={{fontSize:11,color:"#94a3b8",marginTop:3,display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+                      <span>{item.id}</span>
+                      <span style={{background:nc.bg,color:nc.text,border:`1px solid ${nc.border}`,borderRadius:4,padding:"1px 7px",fontWeight:700,fontSize:10}}>{item.negocio}</span>
+                      <span>{item.inicio} → {item.fin} · {item.duracion} días</span>
+                    </div>
+                  </div>
+                  <span style={{padding:"4px 14px",borderRadius:99,background:bc,color:cc,fontSize:13,fontWeight:800,border:`1px solid ${cc}33`}}>{item.cobertura}%</span>
+                </div>
+
+                {/* Contenido: cobertura + venta */}
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0}}>
+                  {/* Cobertura PDVs */}
+                  <div style={{padding:"16px 20px",borderRight:"1px solid #f1f5f9"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:12}}>📍 Cobertura de PDVs</div>
+                    <div style={{display:"flex",gap:20,flexWrap:"wrap"}}>
+                      <div>
+                        <div style={{fontSize:11,color:"#94a3b8",fontWeight:600}}>Audiencia</div>
+                        <div style={{fontSize:16,fontWeight:800,color:"#1e293b",marginTop:2}}>{item.pdvsSegmento.toLocaleString("es-AR")}</div>
+                        <div style={{fontSize:11,color:"#94a3b8"}}>PDVs segmento</div>
+                      </div>
+                      <div>
+                        <div style={{fontSize:11,color:"#94a3b8",fontWeight:600}}>Impactados</div>
+                        <div style={{fontSize:16,fontWeight:800,color:cc,marginTop:2}}>{item.pdvsAlcanzados.toLocaleString("es-AR")}</div>
+                        <div style={{fontSize:11,color:"#94a3b8"}}>PDVs alcanzados</div>
+                      </div>
+                    </div>
+                    <div style={{marginTop:12}}>
+                      <div style={{height:6,background:"#e2e8f0",borderRadius:99,overflow:"hidden"}}>
+                        <div style={{width:`${item.cobertura}%`,height:"100%",background:cc,borderRadius:99}}/>
+                      </div>
+                      <div style={{fontSize:11,color:"#94a3b8",marginTop:4}}>{item.audiencia}</div>
+                    </div>
+                  </div>
+
+                  {/* Datos de venta */}
+                  <div style={{padding:"16px 20px"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:12}}>📈 Datos de venta</div>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                      {[
+                        ["Pedidos",  item.pedidos.toLocaleString("es-AR"),  "con esta promo",   "#1E6FD9"],
+                        ["Unidades", item.unidades.toLocaleString("es-AR"), "vendidas",         "#16a34a"],
+                        ["Bultos",   item.bultos.toLocaleString("es-AR"),   "vendidos",         "#d97706"],
+                        ["Kilos",    item.kilos.toLocaleString("es-AR"),    "vendidos",         "#8b5cf6"],
+                      ].map(([label,val,sub,color])=>(
+                        <div key={label} style={{background:"#f8fafc",borderRadius:10,padding:"10px 12px",border:"1px solid #f1f5f9"}}>
+                          <div style={{fontSize:11,color:"#94a3b8",fontWeight:600}}>{label}</div>
+                          <div style={{fontSize:18,fontWeight:800,color,marginTop:2,lineHeight:1}}>{val}</div>
+                          <div style={{fontSize:10,color:"#94a3b8",marginTop:3}}>{sub}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {filtrarPromos.length===0 && <div style={{padding:48,textAlign:"center",color:"#94a3b8"}}>No hay resultados.</div>}
         </div>
+      )}
 
-        {filtered.length !== HISTORIAL_DATA.length && (
-          <div style={{marginTop:10,fontSize:12,color:"#64748b"}}>
-            Mostrando {filtered.length} de {HISTORIAL_DATA.length} campañas
-            <button onClick={()=>{setBusqueda("");setFiltroCategoria("todos");}} style={{marginLeft:10,color:"#1E6FD9",background:"none",border:"none",cursor:"pointer",fontSize:12,fontWeight:600}}>Limpiar filtros</button>
-          </div>
-        )}
-      </div>
+      {/* ── BANNERS ── */}
+      {subTab==="banners" && (
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {filtrarBanners.map(item => {
+            const ec = ESPACIO_C[item.espacio]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
+            const cc = colorCob(item.cobertura);
+            const bc = bgCob(item.cobertura);
+            return (
+              <div key={item.id} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+                {/* Header */}
+                <div style={{padding:"14px 20px",borderBottom:"1px solid #f1f5f9",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:700,fontSize:15,color:"#1e293b"}}>{item.nombre}</div>
+                    <div style={{fontSize:11,color:"#94a3b8",marginTop:3,display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+                      <span>{item.id}</span>
+                      <span style={{background:ec.bg,color:ec.text,border:`1px solid ${ec.border}`,borderRadius:4,padding:"1px 7px",fontWeight:700,fontSize:10}}>{item.espacio}</span>
+                      <span>{item.inicio} → {item.fin} · {item.duracion} días</span>
+                    </div>
+                  </div>
+                  <span style={{padding:"4px 14px",borderRadius:99,background:bc,color:cc,fontSize:13,fontWeight:800,border:`1px solid ${cc}33`}}>{item.cobertura}%</span>
+                </div>
 
-      {/* Tabla */}
-      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead>
-            <tr style={{background:"#f8fafc",borderBottom:"1px solid #e2e8f0"}}>
-              {["Campaña","Audiencia","Período","Duración","PDVs alcanzados","Cobertura final"].map((h,i)=>(
-                <th key={h} style={{padding:"12px 16px",textAlign:i>=3?"center":"left",fontSize:11,color:"#94a3b8",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.06em",whiteSpace:"nowrap"}}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(item=>{
-              const c = colorCobertura(item.cobertura);
-              const bg = bgCobertura(item.cobertura);
-              const _TIPOS_H = {"Regular":{bg:"#E8F0FE",border:"#1E6FD9",text:"#1245A8"},"Más por Menos":{bg:"#e0f2fe",border:"#0ea5e9",text:"#0369a1"},"Progresiva":{bg:"#f5f3ff",border:"#8b5cf6",text:"#6d28d9"},"Landing Tematizada":{bg:"#f0fdf4",border:"#16a34a",text:"#166534"},"Pop Up":{bg:"#fce7f3",border:"#ec4899",text:"#9d174d"},"Banner Hero":{bg:"#ffedd5",border:"#f97316",text:"#9a3412"},"Banner Search":{bg:"#d1fae5",border:"#10b981",text:"#065f46"},"Banner Cart":{bg:"#e0f2fe",border:"#38bdf8",text:"#075985"},"Banner Novedades":{bg:"#f1f5f9",border:"#64748b",text:"#334155"},"Top Bar":{bg:"#fdf2f8",border:"#d946ef",text:"#86198f"}};
-              const tipoC = _TIPOS_H[item.tipo]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
-              return (
-                <tr key={item.id} style={{borderBottom:"1px solid #f1f5f9",transition:"background 0.15s"}}
-                  onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <td style={{padding:"14px 16px"}}>
-                    <div style={{fontWeight:600,fontSize:14,color:"#1e293b"}}>{item.nombre}</div>
-                    <div style={{display:"flex",alignItems:"center",gap:6,marginTop:4}}>
-                      <span style={{fontSize:11,color:"#94a3b8"}}>{item.id}</span>
-                      <span style={{display:"inline-block",padding:"1px 7px",borderRadius:99,background:tipoC.bg,color:tipoC.text,fontSize:10,fontWeight:700,border:`1px solid ${tipoC.border}22`}}>{item.tipo}</span>
+                {/* Cobertura */}
+                <div style={{padding:"16px 20px"}}>
+                  <div style={{fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:12}}>📍 Cobertura de audiencia impactada</div>
+                  <div style={{display:"flex",gap:24,alignItems:"center",flexWrap:"wrap"}}>
+                    <div>
+                      <div style={{fontSize:11,color:"#94a3b8",fontWeight:600}}>PDVs en audiencia</div>
+                      <div style={{fontSize:20,fontWeight:800,color:"#1e293b",marginTop:2}}>{item.pdvsSegmento.toLocaleString("es-AR")}</div>
                     </div>
-                  </td>
-                  <td style={{padding:"14px 16px",fontSize:13,color:"#475569"}}>{item.audiencia}</td>
-                  <td style={{padding:"14px 16px",fontSize:12,color:"#64748b",whiteSpace:"nowrap"}}>
-                    <div>{item.inicio}</div>
-                    <div style={{color:"#94a3b8"}}>→ {item.fin}</div>
-                  </td>
-                  <td style={{padding:"14px 16px",textAlign:"center"}}>
-                    <span style={{fontSize:13,fontWeight:600,color:"#1e293b"}}>{item.duracion}d</span>
-                  </td>
-                  <td style={{padding:"14px 16px",textAlign:"center"}}>
-                    <div style={{fontSize:13,fontWeight:600,color:"#1e293b"}}>{item.pdvsAlcanzados.toLocaleString("es-AR")}</div>
-                    <div style={{fontSize:11,color:"#94a3b8"}}>de {item.pdvsSegmento.toLocaleString("es-AR")}</div>
-                  </td>
-                  <td style={{padding:"14px 16px",textAlign:"center"}}>
-                    <div style={{display:"inline-flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                      <span style={{padding:"4px 12px",borderRadius:99,background:bg,color:c,fontSize:13,fontWeight:800,border:`1px solid ${c}33`}}>{item.cobertura}%</span>
-                      <span style={{fontSize:10,color:c,fontWeight:600}}>{labelPerf(item.cobertura)}</span>
+                    <div style={{fontSize:20,color:"#e2e8f0"}}>→</div>
+                    <div>
+                      <div style={{fontSize:11,color:"#94a3b8",fontWeight:600}}>PDVs impactados</div>
+                      <div style={{fontSize:20,fontWeight:800,color:cc,marginTop:2}}>{item.pdvsAlcanzados.toLocaleString("es-AR")}</div>
                     </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        {filtered.length===0 && <div style={{padding:48,textAlign:"center",color:"#94a3b8",fontSize:14}}>No hay campañas con ese filtro.</div>}
-      </div>
+                    <div style={{flex:1,minWidth:200}}>
+                      <div style={{height:8,background:"#e2e8f0",borderRadius:99,overflow:"hidden"}}>
+                        <div style={{width:`${item.cobertura}%`,height:"100%",background:cc,borderRadius:99}}/>
+                      </div>
+                      <div style={{fontSize:11,color:"#94a3b8",marginTop:4}}>{item.audiencia}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {filtrarBanners.length===0 && <div style={{padding:48,textAlign:"center",color:"#94a3b8"}}>No hay resultados.</div>}
+        </div>
+      )}
     </div>
   );
 }
