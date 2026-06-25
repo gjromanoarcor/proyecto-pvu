@@ -783,8 +783,6 @@ const HISTORIAL_DATA = [
 function HistorialCampañas() {
   const [busqueda, setBusqueda]     = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("todos");
-  const [filtroPerf, setFiltroPerf] = useState("todos");
-  const [orden, setOrden]           = useState("fecha");
 
   const colorCobertura = v => v===100?"#16a34a":v>=85?"#d97706":"#dc2626";
   const bgCobertura    = v => v===100?"#f0fdf4":v>=85?"#fffbeb":"#fef2f2";
@@ -802,24 +800,13 @@ function HistorialCampañas() {
 
   const filtered = HISTORIAL_DATA
     .filter(i => filtroCategoria==="todos" || i.categoria===filtroCategoria)
-    .filter(i => {
-      if (filtroPerf==="todos") return true;
-      if (filtroPerf==="perfecta") return i.cobertura===100;
-      if (filtroPerf==="buena")    return i.cobertura>=85 && i.cobertura<100;
-      if (filtroPerf==="fallas")   return i.cobertura<85;
-    })
+
     .filter(i => {
       if (!busqueda) return true;
       const q = busqueda.toLowerCase();
       return i.nombre.toLowerCase().includes(q) || i.audiencia.toLowerCase().includes(q) || i.id.toLowerCase().includes(q);
     })
-    .sort((a,b) => {
-      if (orden==="fecha")     return b.inicio.localeCompare(a.inicio);
-      if (orden==="cobertura") return b.cobertura - a.cobertura;
-      if (orden==="duracion")  return b.duracion - a.duracion;
-      if (orden==="pdvs")      return b.pdvsAlcanzados - a.pdvsAlcanzados;
-      return 0;
-    });
+    .sort((a,b) => b.inicio.localeCompare(a.inicio));
 
   // KPIs globales
   const total        = HISTORIAL_DATA.length;
@@ -981,11 +968,15 @@ function CoberturaPorDistribuidor() {
   const totalPdvs   = DISTRIBUIDORES_DATA.reduce((a,d) => a + d.pdvsTotal, 0);
   const conFallas   = DISTRIBUIDORES_DATA.filter(d => d.pdvsFalla > 0).length;
 
-  const sorted = [...DISTRIBUIDORES_DATA].sort((a,b) =>
-    ordenar === "fallas" ? b.pdvsFalla - a.pdvsFalla :
-    ordenar === "cobertura" ? (a.pdvsFalla/a.pdvsTotal) - (b.pdvsFalla/b.pdvsTotal) :
-    a.nombre.localeCompare(b.nombre)
-  );
+  const sorted = [...DISTRIBUIDORES_DATA].sort((a,b) => {
+    // Siempre críticos primero, luego por el criterio elegido
+    const pctA = a.pdvsFalla / a.pdvsTotal;
+    const pctB = b.pdvsFalla / b.pdvsTotal;
+    if (ordenar === "fallas")     return b.pdvsFalla - a.pdvsFalla;
+    if (ordenar === "cobertura")  return pctB - pctA;
+    if (ordenar === "nombre")     return a.nombre.localeCompare(b.nombre);
+    return b.pdvsFalla - a.pdvsFalla;
+  });
 
   const colorFalla = (pct) =>
     pct === 0 ? "#16a34a" : pct < 30 ? "#d97706" : "#dc2626";
