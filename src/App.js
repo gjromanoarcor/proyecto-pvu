@@ -1056,7 +1056,8 @@ function HistorialCampañas() {
             {filtered.map(item=>{
               const c = colorCobertura(item.cobertura);
               const bg = bgCobertura(item.cobertura);
-              const tipoC = COLORES_TIPO[item.tipo]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
+              const _TIPOS_H = {"Regular":{bg:"#E8F0FE",border:"#1E6FD9",text:"#1245A8"},"Más por Menos":{bg:"#e0f2fe",border:"#0ea5e9",text:"#0369a1"},"Progresiva":{bg:"#f5f3ff",border:"#8b5cf6",text:"#6d28d9"},"Landing Tematizada":{bg:"#f0fdf4",border:"#16a34a",text:"#166534"},"Pop Up":{bg:"#fce7f3",border:"#ec4899",text:"#9d174d"},"Banner Hero":{bg:"#ffedd5",border:"#f97316",text:"#9a3412"},"Banner Search":{bg:"#d1fae5",border:"#10b981",text:"#065f46"},"Banner Cart":{bg:"#e0f2fe",border:"#38bdf8",text:"#075985"},"Banner Novedades":{bg:"#f1f5f9",border:"#64748b",text:"#334155"},"Top Bar":{bg:"#fdf2f8",border:"#d946ef",text:"#86198f"}};
+              const tipoC = _TIPOS_H[item.tipo]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
               return (
                 <tr key={item.id} style={{borderBottom:"1px solid #f1f5f9",transition:"background 0.15s"}}
                   onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
