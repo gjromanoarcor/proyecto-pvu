@@ -580,14 +580,16 @@ function ResumenSemanal({ userMail }) {
 }
 
 // ─── CALENDARIO ──────────────────────────────────────────────────────────────
-const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const DIAS_SEMANA = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-
-const COLORES_TIPO = {
-  "Regular":           { bg:"#E8F0FE", border:"#1E6FD9", text:"#1245A8" },
-  "Más por Menos":     { bg:"#e0f2fe", border:"#0ea5e9", text:"#0369a1" },
-  "Progresiva":        { bg:"#F0F4FF", border:"#1557B0", text:"#1557B0" },
-  "Landing Tematizada":{ bg:"#fef9c3", border:"#eab308", text:"#854d0e" },
+const NEGOCIOS = ["Alimentos","Chocolates","Golosinas","Helados","Harinas"];
+const NEGOCIO_COLORES = {
+  "Alimentos":   { bg:"#e0f2fe", border:"#0ea5e9", text:"#0369a1" },
+  "Chocolates":  { bg:"#fce7f3", border:"#ec4899", text:"#9d174d" },
+  "Golosinas":   { bg:"#fef9c3", border:"#eab308", text:"#854d0e" },
+  "Helados":     { bg:"#ede9fe", border:"#8b5cf6", text:"#6d28d9" },
+  "Harinas":     { bg:"#ffedd5", border:"#f97316", text:"#9a3412" },
+};
+const ESPACIO_COLORES = {
+  "Landing Tematizada":{ bg:"#f0fdf4", border:"#16a34a", text:"#166534" },
   "Pop Up":            { bg:"#fce7f3", border:"#ec4899", text:"#9d174d" },
   "Banner Hero":       { bg:"#ffedd5", border:"#f97316", text:"#9a3412" },
   "Banner Search":     { bg:"#d1fae5", border:"#10b981", text:"#065f46" },
@@ -596,169 +598,340 @@ const COLORES_TIPO = {
   "Top Bar":           { bg:"#fdf2f8", border:"#d946ef", text:"#86198f" },
 };
 
+// Agregar negocio a las promos
+const PROMOS_CAL = PROMOS.map((p,i) => ({
+  ...p,
+  negocio: NEGOCIOS[i % NEGOCIOS.length]
+}));
+
+const DIAS_SEMANA_FULL = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const DIAS_SEMANA_SHORT = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+function fmtDate(d) {
+  return d.toISOString().split("T")[0];
+}
+function fmtDiaMes(d) {
+  return `${d.getDate()} ${["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][d.getMonth()]}`;
+}
+
+function itemsEnFecha(fecha) {
+  const todos = [
+    ...PROMOS_CAL.map(p => ({ ...p, categoria:"promo" })),
+    ...BANNERS.map(b => ({ ...b, categoria:"banner", negocio: b.espacio })),
+  ];
+  return todos.filter(i => i.inicio <= fecha && i.fin >= fecha);
+}
+
+function ChipItem({ item, onClick }) {
+  const esPromo = item.categoria === "promo";
+  const c = esPromo
+    ? (NEGOCIO_COLORES[item.negocio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" })
+    : (ESPACIO_COLORES[item.espacio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" });
+  return (
+    <div onClick={e => { e.stopPropagation(); onClick && onClick(item); }}
+      style={{fontSize:10,fontWeight:600,color:c.text,background:c.bg,border:`1px solid ${c.border}`,borderRadius:4,padding:"2px 6px",marginBottom:2,cursor:"pointer",overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",maxWidth:"100%"}}>
+      {item.nombre}
+    </div>
+  );
+}
+
+function PanelDetalle({ item, onClose }) {
+  if (!item) return (
+    <div style={{width:260,background:"#f8fafc",border:"1px dashed #e2e8f0",borderRadius:14,padding:"24px 20px",flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",gap:8,minHeight:200}}>
+      <div style={{fontSize:24}}>👆</div>
+      <div style={{fontSize:13,color:"#94a3b8",lineHeight:1.5}}>Hacé click en cualquier ítem para ver el detalle</div>
+    </div>
+  );
+  const esPromo = item.categoria === "promo";
+  const c = esPromo
+    ? (NEGOCIO_COLORES[item.negocio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" })
+    : (ESPACIO_COLORES[item.espacio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" });
+  return (
+    <div style={{width:260,background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:"18px",flexShrink:0}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+        <div style={{fontSize:13,fontWeight:700,color:"#1e293b",lineHeight:1.3,maxWidth:210}}>{item.nombre}</div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:18,lineHeight:1,padding:0}}>×</button>
+      </div>
+      <span style={{display:"inline-block",padding:"3px 10px",borderRadius:99,background:c.bg,color:c.text,fontSize:11,fontWeight:700,border:`1px solid ${c.border}`,marginBottom:14}}>
+        {esPromo ? item.negocio : item.espacio}
+      </span>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {[
+          ["Estado",     <span style={{color:estadoConfig[item.estado].color,fontWeight:700}}>{estadoConfig[item.estado].label}</span>],
+          ["Vigencia",   `${item.inicio} → ${item.fin}`],
+          ["Audiencia",  item.audiencia],
+          ["PDVs",       `${item.pdvsAlcanzados.toLocaleString("es-AR")} / ${item.pdvsSegmento.toLocaleString("es-AR")}`],
+          ["Cobertura",  `${item.cobertura}%`],
+          esPromo ? ["Tipo", `${item.tipo} · ${item.subtipo}`] : ["Posición", item.espacio],
+        ].map(([label,val]) => (
+          <div key={label}>
+            <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
+            <div style={{fontSize:13,color:"#1e293b",marginTop:2}}>{val}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:14}}>
+        <CoverageBar value={item.cobertura} estado={item.estado}/>
+      </div>
+    </div>
+  );
+}
+
 function CalendarioActivaciones() {
-  const [mesActual, setMesActual] = useState({ year:2026, month:5 });
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+  const HOY = new Date(2026, 5, 23);
+  const [vista, setVista]           = useState("semanal");
+  const [fechaRef, setFechaRef]     = useState(HOY);
+  const [itemSeleccionado, setItem] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState("todos");
 
-  const todos = [
-    ...PROMOS.map(p => ({ ...p, categoria:"promo",  tipoVisual:p.tipo })),
-    ...BANNERS.map(b => ({ ...b, categoria:"banner", tipoVisual:b.espacio })),
-  ];
-
-  const itemsFiltrados = todos.filter(i =>
-    filtroTipo==="todos" ? true : filtroTipo==="promos" ? i.categoria==="promo" : i.categoria==="banner"
-  );
-
-  const diasEnMes  = new Date(mesActual.year, mesActual.month+1, 0).getDate();
-  const offsetInicio = new Date(mesActual.year, mesActual.month, 1).getDay();
-
-  const celdas = [];
-  for (let i=0; i<offsetInicio; i++) celdas.push(null);
-  for (let d=1; d<=diasEnMes; d++) celdas.push(d);
-
-  const fechaStr = (y,m,d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-
-  const itemsEnDia = dia => {
-    if (!dia) return [];
-    const f = fechaStr(mesActual.year, mesActual.month, dia);
-    return itemsFiltrados.filter(i => i.inicio<=f && i.fin>=f);
+  // ── NAVEGACIÓN ──────────────────────────────────────────────────────────
+  const inicioSemana = (d) => {
+    const day = new Date(d);
+    day.setDate(day.getDate() - day.getDay());
+    return day;
   };
 
-  const esSolapamiento = dia => {
-    const items = itemsEnDia(dia);
-    const audiencias = items.map(i=>i.audiencia);
-    return [...new Set(audiencias)].some(a => audiencias.filter(x=>x===a).length>1);
+  const anterior = () => {
+    if (vista === "semanal") setFechaRef(d => addDays(d, -7));
+    else setFechaRef(d => addDays(d, -1));
+  };
+  const siguiente = () => {
+    if (vista === "semanal") setFechaRef(d => addDays(d, 7));
+    else setFechaRef(d => addDays(d, 1));
+  };
+  const irHoy = () => setFechaRef(HOY);
+
+  // ── LABEL DEL PERÍODO ───────────────────────────────────────────────────
+  const labelPeriodo = () => {
+    if (vista === "semanal") {
+      const ini = inicioSemana(fechaRef);
+      const fin = addDays(ini, 6);
+      return `${fmtDiaMes(ini)} – ${fmtDiaMes(fin)} ${fin.getFullYear()}`;
+    }
+    return `${DIAS_SEMANA_FULL[fechaRef.getDay()]}, ${fmtDiaMes(fechaRef)} ${fechaRef.getFullYear()}`;
   };
 
-  const esHoy = dia => dia && fechaStr(mesActual.year, mesActual.month, dia)==="2026-06-23";
+  // ── FILTRADO ────────────────────────────────────────────────────────────
+  const filtrar = (items) => {
+    if (filtroTipo === "promos")  return items.filter(i => i.categoria === "promo");
+    if (filtroTipo === "banners") return items.filter(i => i.categoria === "banner");
+    return items;
+  };
 
-  const mesAnterior  = () => { setMesActual(p => p.month===0  ? {year:p.year-1,month:11} : {...p,month:p.month-1}); setItemSeleccionado(null); };
-  const mesSiguiente = () => { setMesActual(p => p.month===11 ? {year:p.year+1,month:0}  : {...p,month:p.month+1}); setItemSeleccionado(null); };
+  // ── VISTA SEMANAL ───────────────────────────────────────────────────────
+  const diasSemana = Array.from({length:7}, (_,i) => addDays(inicioSemana(fechaRef), i));
 
-  const proximas = todos.filter(i=>i.estado==="inactivo").sort((a,b)=>a.inicio.localeCompare(b.inicio)).slice(0,4);
+  const VistaSemanal = () => (
+    <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+      {/* Header días */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderBottom:"1px solid #e2e8f0"}}>
+        {diasSemana.map((dia,i) => {
+          const esHoy = fmtDate(dia) === fmtDate(HOY);
+          return (
+            <div key={i} onClick={() => { setVista("diaria"); setFechaRef(dia); }}
+              style={{padding:"10px 6px",textAlign:"center",cursor:"pointer",background:esHoy?"#E8F0FE":"transparent",borderRight:i<6?"1px solid #f1f5f9":"none"}}
+              onMouseEnter={e => { if(!esHoy) e.currentTarget.style.background="#f8fafc"; }}
+              onMouseLeave={e => { if(!esHoy) e.currentTarget.style.background="transparent"; }}>
+              <div style={{fontSize:11,fontWeight:600,color:esHoy?"#1E6FD9":"#94a3b8",textTransform:"uppercase",letterSpacing:"0.05em"}}>{DIAS_SEMANA_SHORT[dia.getDay()]}</div>
+              <div style={{fontSize:esHoy?18:16,fontWeight:esHoy?800:400,color:esHoy?"#1E6FD9":"#1e293b",marginTop:2,lineHeight:1}}>
+                {esHoy
+                  ? <span style={{background:"#1E6FD9",color:"#fff",borderRadius:"50%",width:28,height:28,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:14}}>{dia.getDate()}</span>
+                  : dia.getDate()}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-  return (
-    <div>
-      {proximas.length>0 && (
-        <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:"18px 22px",marginBottom:20}}>
-          <div style={{fontSize:13,fontWeight:700,color:"#1e293b",marginBottom:12}}>⚡ Próximas activaciones</div>
-          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-            {proximas.map(i => {
-              const c = COLORES_TIPO[i.tipoVisual]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
-              return (
-                <div key={i.id} onClick={()=>setItemSeleccionado(i)}
-                  style={{flex:1,minWidth:160,padding:"12px 14px",borderRadius:10,border:`1.5px solid ${c.border}`,background:c.bg,cursor:"pointer"}}>
-                  <div style={{fontSize:12,fontWeight:700,color:c.text}}>{i.nombre}</div>
-                  <div style={{fontSize:11,color:"#64748b",marginTop:4}}>Inicia: <strong>{i.inicio}</strong></div>
-                  <div style={{fontSize:11,color:"#94a3b8"}}>{i.audiencia}</div>
-                </div>
-              );
-            })}
+      {/* Filas por negocio (promos) */}
+      {(filtroTipo === "todos" || filtroTipo === "promos") && (
+        <div style={{borderBottom:"1px solid #f1f5f9"}}>
+          <div style={{padding:"8px 12px",fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",background:"#f8fafc"}}>
+            📦 Promociones por negocio
           </div>
+          {NEGOCIOS.map(neg => {
+            const c = NEGOCIO_COLORES[neg];
+            const tieneAlgo = diasSemana.some(dia =>
+              itemsEnFecha(fmtDate(dia)).some(i => i.categoria==="promo" && i.negocio===neg)
+            );
+            if (!tieneAlgo) return null;
+            return (
+              <div key={neg} style={{display:"grid",gridTemplateColumns:"80px repeat(7,1fr)",borderBottom:"1px solid #f8fafc",minHeight:36}}>
+                <div style={{padding:"6px 8px",display:"flex",alignItems:"center",borderRight:"1px solid #f1f5f9"}}>
+                  <span style={{fontSize:10,fontWeight:700,color:c.text,background:c.bg,padding:"2px 6px",borderRadius:4,border:`1px solid ${c.border}`}}>{neg}</span>
+                </div>
+                {diasSemana.map((dia,i) => {
+                  const items = itemsEnFecha(fmtDate(dia)).filter(it => it.categoria==="promo" && it.negocio===neg);
+                  return (
+                    <div key={i} style={{padding:"4px",borderRight:i<6?"1px solid #f8fafc":"none",minHeight:36}}>
+                      {items.map(it => <ChipItem key={it.id} item={it} onClick={setItem}/>)}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       )}
 
-      <div style={{display:"flex",gap:20,alignItems:"flex-start"}}>
-        <div style={{flex:1,background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
-          {/* Header mes */}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px",borderBottom:"1px solid #f1f5f9"}}>
-            <button onClick={mesAnterior}  style={{background:"none",border:"1px solid #e2e8f0",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontSize:16,color:"#64748b"}}>‹</button>
-            <div style={{fontWeight:700,fontSize:16,color:"#1e293b"}}>{MESES[mesActual.month]} {mesActual.year}</div>
-            <button onClick={mesSiguiente} style={{background:"none",border:"1px solid #e2e8f0",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontSize:16,color:"#64748b"}}>›</button>
+      {/* Filas por tipo de espacio (banners) */}
+      {(filtroTipo === "todos" || filtroTipo === "banners") && (
+        <div>
+          <div style={{padding:"8px 12px",fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",background:"#f8fafc"}}>
+            📢 Espacios publicitarios
           </div>
+          {Object.keys(ESPACIO_COLORES).map(espacio => {
+            const c = ESPACIO_COLORES[espacio];
+            const tieneAlgo = diasSemana.some(dia =>
+              itemsEnFecha(fmtDate(dia)).some(i => i.categoria==="banner" && i.espacio===espacio)
+            );
+            if (!tieneAlgo) return null;
+            return (
+              <div key={espacio} style={{display:"grid",gridTemplateColumns:"80px repeat(7,1fr)",borderBottom:"1px solid #f8fafc",minHeight:36}}>
+                <div style={{padding:"6px 8px",display:"flex",alignItems:"center",borderRight:"1px solid #f1f5f9"}}>
+                  <span style={{fontSize:10,fontWeight:700,color:c.text,background:c.bg,padding:"2px 6px",borderRadius:4,border:`1px solid ${c.border}`,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:72,display:"block"}}>{espacio}</span>
+                </div>
+                {diasSemana.map((dia,i) => {
+                  const items = itemsEnFecha(fmtDate(dia)).filter(it => it.categoria==="banner" && it.espacio===espacio);
+                  return (
+                    <div key={i} style={{padding:"4px",borderRight:i<6?"1px solid #f8fafc":"none",minHeight:36}}>
+                      {items.map(it => <ChipItem key={it.id} item={it} onClick={setItem}/>)}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 
-          {/* Filtros */}
-          <div style={{display:"flex",gap:6,padding:"12px 20px",borderBottom:"1px solid #f1f5f9",flexWrap:"wrap",alignItems:"center"}}>
-            {[["todos","Todos"],["promos","Solo Promos"],["banners","Solo Espacios"]].map(([id,label])=>(
-              <button key={id} onClick={()=>setFiltroTipo(id)}
-                style={{padding:"5px 12px",border:`1px solid ${filtroTipo===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroTipo===id?"#E8F0FE":"#fff",color:filtroTipo===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroTipo===id?700:400,cursor:"pointer"}}>
-                {label}
-              </button>
-            ))}
-            <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:6,fontSize:11,color:"#94a3b8"}}>
-              <span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"#fef08a",border:"1px solid #eab308"}}/>
-              Solapamiento de audiencia
+  // ── VISTA DIARIA ─────────────────────────────────────────────────────────
+  const VistaDiaria = () => {
+    const fecha = fmtDate(fechaRef);
+    const items = filtrar(itemsEnFecha(fecha));
+    const promos  = items.filter(i => i.categoria === "promo");
+    const banners = items.filter(i => i.categoria === "banner");
+
+    if (items.length === 0) return (
+      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:48,textAlign:"center",color:"#94a3b8",fontSize:14}}>
+        No hay ítems activos para este día.
+      </div>
+    );
+
+    return (
+      <div style={{display:"flex",flexDirection:"column",gap:16}}>
+        {/* Promos por negocio */}
+        {promos.length > 0 && (filtroTipo === "todos" || filtroTipo === "promos") && (
+          <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+            <div style={{padding:"12px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
+              📦 Promociones <span style={{fontSize:12,color:"#94a3b8",fontWeight:400}}>— {promos.length} activas</span>
             </div>
-          </div>
-
-          {/* Días semana */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderBottom:"1px solid #f1f5f9"}}>
-            {DIAS_SEMANA.map(d=>(
-              <div key={d} style={{padding:"8px 4px",textAlign:"center",fontSize:11,fontWeight:700,color:"#94a3b8",textTransform:"uppercase",letterSpacing:"0.05em"}}>{d}</div>
-            ))}
-          </div>
-
-          {/* Celdas */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)"}}>
-            {celdas.map((dia,idx)=>{
-              const items   = itemsEnDia(dia);
-              const solap   = dia && esSolapamiento(dia);
-              const hoyDia  = esHoy(dia);
+            {NEGOCIOS.map(neg => {
+              const grupo = promos.filter(i => i.negocio === neg);
+              if (!grupo.length) return null;
+              const c = NEGOCIO_COLORES[neg];
               return (
-                <div key={idx} style={{minHeight:90,padding:"6px 4px",borderRight:"1px solid #f8fafc",borderBottom:"1px solid #f8fafc",background:!dia?"#fafbfc":solap?"#fefce8":hoyDia?"#f0f9ff":"#fff",position:"relative"}}>
-                  {dia && (
-                    <>
-                      <div style={{fontSize:12,fontWeight:hoyDia?800:400,color:hoyDia?"#1E6FD9":"#64748b",marginBottom:3,textAlign:"right",paddingRight:4}}>
-                        {hoyDia
-                          ? <span style={{background:"#1E6FD9",color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11}}>{dia}</span>
-                          : dia}
+                <div key={neg} style={{borderBottom:"1px solid #f8fafc"}}>
+                  <div style={{padding:"8px 18px",background:"#fafbfc",display:"flex",alignItems:"center",gap:8}}>
+                    <span style={{fontSize:11,fontWeight:700,color:c.text,background:c.bg,padding:"2px 8px",borderRadius:4,border:`1px solid ${c.border}`}}>{neg}</span>
+                    <span style={{fontSize:11,color:"#94a3b8"}}>{grupo.length} promo{grupo.length>1?"s":""}</span>
+                  </div>
+                  {grupo.map(it => (
+                    <div key={it.id} onClick={() => setItem(it)}
+                      style={{padding:"10px 18px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",borderBottom:"1px solid #f8fafc"}}
+                      onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13,fontWeight:600,color:"#1e293b"}}>{it.nombre}</div>
+                        <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{it.audiencia} · {it.subtipo}</div>
                       </div>
-                      {items.slice(0,3).map(i=>{
-                        const c = COLORES_TIPO[i.tipoVisual]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
-                        const esInicio = i.inicio===fechaStr(mesActual.year,mesActual.month,dia);
-                        return (
-                          <div key={i.id} onClick={()=>setItemSeleccionado(i)}
-                            style={{fontSize:10,fontWeight:600,color:c.text,background:c.bg,border:`1px solid ${c.border}`,borderRadius:4,padding:"2px 5px",marginBottom:2,cursor:"pointer",overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",borderLeft:esInicio?`3px solid ${c.border}`:undefined}}>
-                            {esInicio?"▶ ":""}{i.nombre}
-                          </div>
-                        );
-                      })}
-                      {items.length>3 && <div style={{fontSize:10,color:"#94a3b8",paddingLeft:4}}>+{items.length-3} más</div>}
-                      {solap && <div style={{position:"absolute",top:4,left:4,fontSize:10}}>⚠</div>}
-                    </>
-                  )}
+                      <div style={{fontSize:12,fontWeight:700,color:it.cobertura===100?"#16a34a":it.cobertura>=85?"#d97706":"#dc2626"}}>
+                        {it.cobertura}%
+                      </div>
+                      <span style={{fontSize:11,color:"#94a3b8"}}>›</span>
+                    </div>
+                  ))}
                 </div>
               );
             })}
           </div>
-        </div>
+        )}
 
-        {/* Panel lateral detalle */}
-        {itemSeleccionado ? (
-          <div className="cal-sidebar" style={{width:280,background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:"20px",flexShrink:0}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
-              <div style={{fontSize:14,fontWeight:700,color:"#1e293b",lineHeight:1.3,maxWidth:220}}>{itemSeleccionado.nombre}</div>
-              <button onClick={()=>setItemSeleccionado(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:18,lineHeight:1}}>×</button>
+        {/* Banners por tipo */}
+        {banners.length > 0 && (filtroTipo === "todos" || filtroTipo === "banners") && (
+          <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+            <div style={{padding:"12px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
+              📢 Espacios publicitarios <span style={{fontSize:12,color:"#94a3b8",fontWeight:400}}>— {banners.length} activos</span>
             </div>
-            {(()=>{
-              const c=COLORES_TIPO[itemSeleccionado.tipoVisual]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
-              return <span style={{display:"inline-block",padding:"3px 10px",borderRadius:99,background:c.bg,color:c.text,fontSize:12,fontWeight:700,border:`1px solid ${c.border}`,marginBottom:14}}>{itemSeleccionado.tipoVisual}</span>;
-            })()}
-            <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {[
-                ["Estado",         <span style={{color:estadoConfig[itemSeleccionado.estado].color,fontWeight:700}}>{estadoConfig[itemSeleccionado.estado].label}</span>],
-                ["Vigencia",       `${itemSeleccionado.inicio} → ${itemSeleccionado.fin}`],
-                ["Audiencia",      itemSeleccionado.audiencia],
-                ["PDVs segmento",  itemSeleccionado.pdvsSegmento.toLocaleString("es-AR")],
-                ["PDVs alcanzados",itemSeleccionado.pdvsAlcanzados.toLocaleString("es-AR")],
-                ["Cobertura",      `${itemSeleccionado.cobertura}%`],
-                ["Descripción",    itemSeleccionado.detalle],
-              ].map(([label,val])=>(
-                <div key={label}>
-                  <div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
-                  <div style={{fontSize:13,color:"#1e293b",marginTop:2,lineHeight:1.5}}>{val}</div>
+            {banners.map(it => {
+              const c = ESPACIO_COLORES[it.espacio] || {bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
+              return (
+                <div key={it.id} onClick={() => setItem(it)}
+                  style={{padding:"12px 18px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",borderBottom:"1px solid #f8fafc"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <span style={{fontSize:11,fontWeight:700,color:c.text,background:c.bg,padding:"2px 8px",borderRadius:4,border:`1px solid ${c.border}`,whiteSpace:"nowrap"}}>{it.espacio}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,fontWeight:600,color:"#1e293b"}}>{it.nombre}</div>
+                    <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{it.audiencia}</div>
+                  </div>
+                  <div style={{fontSize:12,fontWeight:700,color:it.cobertura===100?"#16a34a":it.cobertura>=85?"#d97706":"#dc2626"}}>
+                    {it.cobertura}%
+                  </div>
+                  <span style={{fontSize:11,color:"#94a3b8"}}>›</span>
                 </div>
-              ))}
-            </div>
-            <div style={{marginTop:16}}><CoverageBar value={itemSeleccionado.cobertura} estado={itemSeleccionado.estado}/></div>
-          </div>
-        ) : (
-          <div className="cal-sidebar" style={{width:280,background:"#f8fafc",border:"1px dashed #e2e8f0",borderRadius:14,padding:"24px 20px",flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",gap:8,minHeight:200}}>
-            <div style={{fontSize:24}}>👆</div>
-            <div style={{fontSize:13,color:"#94a3b8",lineHeight:1.5}}>Hacé click en cualquier ítem para ver el detalle</div>
+              );
+            })}
           </div>
         )}
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      {/* Controles */}
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16,flexWrap:"wrap"}}>
+        {/* Selector de vista */}
+        <div style={{display:"flex",border:"1px solid #e2e8f0",borderRadius:8,overflow:"hidden"}}>
+          {[["semanal","Semana"],["diaria","Día"]].map(([id,label]) => (
+            <button key={id} onClick={() => setVista(id)}
+              style={{padding:"7px 16px",border:"none",background:vista===id?"#1E6FD9":"#fff",color:vista===id?"#fff":"#64748b",fontSize:13,fontWeight:vista===id?700:400,cursor:"pointer"}}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Navegación */}
+        <button onClick={anterior} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:8,padding:"7px 14px",cursor:"pointer",fontSize:15,color:"#64748b"}}>‹</button>
+        <div style={{fontWeight:700,fontSize:14,color:"#1e293b",minWidth:200,textAlign:"center"}}>{labelPeriodo()}</div>
+        <button onClick={siguiente} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:8,padding:"7px 14px",cursor:"pointer",fontSize:15,color:"#64748b"}}>›</button>
+        <button onClick={irHoy} style={{background:"#E8F0FE",border:"1px solid #1E6FD9",borderRadius:8,padding:"7px 14px",cursor:"pointer",fontSize:12,fontWeight:600,color:"#1E6FD9"}}>Hoy</button>
+
+        {/* Filtro tipo */}
+        <div style={{marginLeft:"auto",display:"flex",gap:6}}>
+          {[["todos","Todos"],["promos","Promos"],["banners","Espacios"]].map(([id,label]) => (
+            <button key={id} onClick={() => setFiltroTipo(id)}
+              style={{padding:"6px 12px",border:`1px solid ${filtroTipo===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroTipo===id?"#E8F0FE":"#fff",color:filtroTipo===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroTipo===id?700:400,cursor:"pointer"}}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Contenido + panel detalle */}
+      <div style={{display:"flex",gap:16,alignItems:"flex-start"}}>
+        <div style={{flex:1,minWidth:0}}>
+          {vista === "semanal" ? <VistaSemanal/> : <VistaDiaria/>}
+        </div>
+        <PanelDetalle item={itemSeleccionado} onClose={() => setItem(null)}/>
       </div>
     </div>
   );
@@ -854,26 +1027,6 @@ function HistorialCampañas() {
               </button>
             ))}
           </div>
-
-          {/* Performance */}
-          <div style={{display:"flex",gap:6}}>
-            {[["todos","Todas"],["perfecta","Perfecta 100%"],["buena","Buena ≥85%"],["fallas","Con fallas"]].map(([id,label])=>(
-              <button key={id} onClick={()=>setFiltroPerf(id)}
-                style={{padding:"6px 12px",border:`1px solid ${filtroPerf===id?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:filtroPerf===id?"#E8F0FE":"#fff",color:filtroPerf===id?"#1E6FD9":"#64748b",fontSize:12,fontWeight:filtroPerf===id?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Ordenar */}
-          <select value={orden} onChange={e=>setOrden(e.target.value)}
-            style={{padding:"7px 12px",border:"1px solid #e2e8f0",borderRadius:8,fontSize:12,color:"#64748b",background:"#fff",cursor:"pointer",outline:"none"}}>
-            <option value="fecha">Ordenar: Más reciente</option>
-            <option value="cobertura">Ordenar: Mayor cobertura</option>
-            <option value="duracion">Ordenar: Mayor duración</option>
-            <option value="pdvs">Ordenar: Más PDVs</option>
-          </select>
-
           {/* Exportar */}
           <button onClick={descargarCSV}
             style={{display:"flex",alignItems:"center",gap:6,background:"#1e293b",color:"#fff",border:"none",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
