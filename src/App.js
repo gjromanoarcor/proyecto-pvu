@@ -959,16 +959,18 @@ function HistorialCampañas() {
 
 // ─── COBERTURA POR DISTRIBUIDOR ──────────────────────────────────────────────
 const DISTRIBUIDORES_DATA = [
-  { id:"tokin0023", nombre:"Dist. Norte SA",         pdvsTotal:380, pdvsFalla:280, zona:"GBA Norte"   },
-  { id:"tokin0045", nombre:"Logística Sur SRL",      pdvsTotal:210, pdvsFalla:190, zona:"GBA Sur"     },
-  { id:"tokin0012", nombre:"Reparto Centro SA",       pdvsTotal:450, pdvsFalla:120, zona:"CABA"       },
-  { id:"tokin0078", nombre:"Dist. Litoral SRL",      pdvsTotal:320, pdvsFalla:90,  zona:"Litoral"     },
-  { id:"tokin0091", nombre:"Transportes del Este",   pdvsTotal:180, pdvsFalla:80,  zona:"NOA"        },
-  { id:"tokin0034", nombre:"Dist. Cuyo SA",          pdvsTotal:290, pdvsFalla:40,  zona:"Cuyo"       },
-  { id:"tokin0156", nombre:"Logística Patagonia",    pdvsTotal:150, pdvsFalla:20,  zona:"Patagonia"  },
-  { id:"tokin0067", nombre:"Reparto Córdoba SRL",    pdvsTotal:410, pdvsFalla:10,  zona:"Centro"     },
-  { id:"tokin0103", nombre:"Dist. NEA SA",           pdvsTotal:260, pdvsFalla:0,   zona:"NEA"        },
-  { id:"tokin0144", nombre:"Transportes Rosario",    pdvsTotal:340, pdvsFalla:0,   zona:"Litoral"    },
+  { id:"tokin0023", nombre:"MENDEZ S.R.L.",                    pdvsTotal:380, pdvsFalla:280, zona:"GBA Norte"    },
+  { id:"tokin0045", nombre:"RIM S.A.",                         pdvsTotal:210, pdvsFalla:190, zona:"GBA Sur"      },
+  { id:"tokin0041", nombre:"LOGISTICA ZONA SUR S.A.",          pdvsTotal:320, pdvsFalla:120, zona:"GBA Sur"      },
+  { id:"tokin0078", nombre:"TRES SOLES S.R.L.",                pdvsTotal:290, pdvsFalla:90,  zona:"Litoral"      },
+  { id:"tokin0091", nombre:"DISTRIBUIDORA SINERGIA S.R.L.",    pdvsTotal:180, pdvsFalla:80,  zona:"NOA"          },
+  { id:"tokin0012", nombre:"GONZALEZ GARCIA S.A.",             pdvsTotal:450, pdvsFalla:40,  zona:"CABA"         },
+  { id:"tokin0060", nombre:"LATAM DISTRIBUCION S.A.",          pdvsTotal:260, pdvsFalla:20,  zona:"Centro"       },
+  { id:"tokin0034", nombre:"JORGE FARJAT S.A.",                pdvsTotal:290, pdvsFalla:10,  zona:"Cuyo"         },
+  { id:"tokin0067", nombre:"DIGOBAL S.R.L.",                   pdvsTotal:410, pdvsFalla:0,   zona:"Centro"       },
+  { id:"tokin0144", nombre:"MENDOCOR S.R.L.",                  pdvsTotal:340, pdvsFalla:0,   zona:"Cuyo"         },
+  { id:"tokin0103", nombre:"ROSETA S.R.L.",                    pdvsTotal:260, pdvsFalla:0,   zona:"Litoral"      },
+  { id:"tokin0156", nombre:"ESEPA S.A.",                       pdvsTotal:150, pdvsFalla:0,   zona:"Patagonia"    },
 ];
 
 function CoberturaPorDistribuidor() {
