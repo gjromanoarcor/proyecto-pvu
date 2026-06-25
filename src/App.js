@@ -88,7 +88,7 @@ function generarAlertas() {
 
 // ─── CONSTANTES VISUALES ─────────────────────────────────────────────────────
 const tipoConfig  = { "Regular":{"color":"#1E6FD9","bg":"#E8F0FE"}, "Más por Menos":{"color":"#0ea5e9","bg":"#e0f2fe"}, "Progresiva":{"color":"#1557B0","bg":"#F0F4FF"} };
-const estadoConfig= { activo:{"label":"Activo","color":"#16a34a","bg":"#f0fdf4","dot":"#16a34a"}, alerta:{"label":"Alerta cobertura","color":"#d97706","bg":"#fffbeb","dot":"#d97706"}, inactivo:{"label":"Programado","color":"#64748b","bg":"#f8fafc","dot":"#64748b"} };
+const estadoConfig= { activo:{"label":"Activo","color":"#16a34a","bg":"#f0fdf4","dot":"#16a34a"}, alerta:{"label":"Activo · Alerta cobertura","color":"#f97316","bg":"#fff7ed","dot":"#f97316"}, inactivo:{"label":"Programado","color":"#64748b","bg":"#f8fafc","dot":"#64748b"} };
 const prioConfig  = { critica:{"color":"#dc2626","bg":"#fef2f2","label":"Crítica"}, alta:{"color":"#d97706","bg":"#fffbeb","label":"Alta"}, media:{"color":"#1E6FD9","bg":"#E8F0FE","label":"Media"}, info:{"color":"#16a34a","bg":"#f0fdf4","label":"Info"} };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -112,8 +112,15 @@ function descargarCSV(item) {
 }
 
 // ─── COMPONENTES BASE ────────────────────────────────────────────────────────
+function colorPorCobertura(value, estado) {
+  if (estado === "inactivo") return "#cbd5e1";
+  if (value >= 90) return "#16a34a";
+  if (value >= 60) return "#f97316";
+  return "#dc2626";
+}
+
 function CoverageBar({ value, estado }) {
-  const color = estado==="alerta"?"#f59e0b":estado==="inactivo"?"#cbd5e1":"#1E6FD9";
+  const color = colorPorCobertura(value, estado);
   return (
     <div style={{display:"flex",alignItems:"center",gap:8}}>
       <div style={{flex:1,height:6,background:"#e2e8f0",borderRadius:99,overflow:"hidden"}}>
@@ -962,8 +969,8 @@ function HistorialCampañas() {
   const [subTab, setSubTab]       = useState("promos");
   const [busqueda, setBusqueda]   = useState("");
 
-  const colorCob = v => v===100?"#16a34a":v>=85?"#d97706":"#dc2626";
-  const bgCob    = v => v===100?"#f0fdf4":v>=85?"#fffbeb":"#fef2f2";
+  const colorCob = v => v>=90?"#16a34a":v>=60?"#f97316":"#dc2626";
+  const bgCob    = v => v>=90?"#f0fdf4":v>=60?"#fff7ed":"#fef2f2";
 
   const NEGOCIO_C = { "Alimentos":{bg:"#e0f2fe",border:"#0ea5e9",text:"#0369a1"}, "Chocolates":{bg:"#fce7f3",border:"#ec4899",text:"#9d174d"}, "Golosinas":{bg:"#fef9c3",border:"#eab308",text:"#854d0e"}, "Helados":{bg:"#ede9fe",border:"#8b5cf6",text:"#6d28d9"}, "Harinas":{bg:"#ffedd5",border:"#f97316",text:"#9a3412"} };
   const ESPACIO_C = { "Landing Tematizada":{bg:"#f0fdf4",border:"#16a34a",text:"#166534"}, "Pop Up":{bg:"#fce7f3",border:"#ec4899",text:"#9d174d"}, "Banner Hero":{bg:"#ffedd5",border:"#f97316",text:"#9a3412"}, "Banner Search":{bg:"#d1fae5",border:"#10b981",text:"#065f46"}, "Banner Cart":{bg:"#e0f2fe",border:"#38bdf8",text:"#075985"}, "Banner Novedades":{bg:"#f1f5f9",border:"#64748b",text:"#334155"}, "Top Bar":{bg:"#fdf2f8",border:"#d946ef",text:"#86198f"} };
@@ -1366,7 +1373,7 @@ function PVU({ user, onLogout }) {
     { id:"calendario", label:"Calendario", icon:"📅",  count:null },
     { id:"historial",  label:"Historial",  icon:"📊",  count:null },
   ];
-  const filtros = [{id:"todos",label:"Todos"},{id:"activo",label:"Activos"},{id:"alerta",label:"Alertas"},{id:"inactivo",label:"Programados"}];
+  const filtros = [{id:"todos",label:"Todos"},{id:"activo",label:"Activos"},{id:"inactivo",label:"Programados"}];
 
   return (
     <div style={{minHeight:"100vh",background:"#F5F5F5",fontFamily:"'Roboto',system-ui,sans-serif",paddingBottom:64}}>
