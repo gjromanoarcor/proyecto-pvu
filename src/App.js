@@ -1042,7 +1042,11 @@ function CoberturaPorDistribuidor() {
                 {/* Nombre y zona */}
                 <div style={{flex:1,minWidth:160}}>
                   <div style={{fontWeight:700,fontSize:14,color:"#1e293b"}}>{d.nombre}</div>
-                  <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{d.id} · {d.zona}</div>
+                  <div style={{fontSize:11,color:"#94a3b8",marginTop:3,display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{background:"#E8F0FE",color:"#1E6FD9",borderRadius:4,padding:"1px 6px",fontWeight:700,fontSize:10}}>{d.id}</span>
+                    <span>·</span>
+                    <span>{d.zona}</span>
+                  </div>
                 </div>
 
                 {/* Barra de cobertura */}
