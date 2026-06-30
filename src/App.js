@@ -255,7 +255,7 @@ function Row({ item, tipo }) {
         </td>
         <td style={{padding:"14px 16px",minWidth:160}}>
           <CoverageBar value={item.cobertura} estado={item.estado}/>
-          {item.estado==="alerta" && <div style={{fontSize:11,color:"#d97706",marginTop:4,fontWeight:600}}>⚠ {pdvsFallidos.toLocaleString("es-AR")} PDVs sin cobertura</div>}
+          {item.estado==="alerta" && <div style={{fontSize:11,color:"#f97316",marginTop:4,fontWeight:600}}>⚠ {pdvsFallidos.toLocaleString("es-AR")} PDVs sin cobertura</div>}
         </td>
         <td style={{padding:"14px 16px",fontSize:12,color:"#94a3b8",textAlign:"right",whiteSpace:"nowrap"}}>
           <div>{item.fin}</div><div style={{marginTop:2,color:"#cbd5e1"}}>{item.ultimaVerificacion}</div>
@@ -270,7 +270,7 @@ function Row({ item, tipo }) {
               <div><div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.07em"}}>Vigencia</div><div style={{fontSize:14,color:"#1e293b",marginTop:2}}>{item.inicio} → {item.fin}</div></div>
               <div><div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.07em"}}>PDVs en audiencia</div><div style={{fontSize:14,color:"#1e293b",marginTop:2}}>{item.pdvsSegmento.toLocaleString("es-AR")}</div></div>
               <div><div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.07em"}}>PDVs alcanzados</div>
-                <div style={{fontSize:14,marginTop:2,fontWeight:item.estado==="alerta"?700:400,color:item.estado==="alerta"?"#d97706":"#1e293b"}}>
+                <div style={{fontSize:14,marginTop:2,fontWeight:item.estado==="alerta"?700:400,color:item.cobertura>=90?"#16a34a":item.cobertura>=60?"#f97316":"#dc2626"}}>
                   {item.pdvsAlcanzados.toLocaleString("es-AR")}{item.estado==="alerta"&&<span style={{marginLeft:6,fontSize:12}}>⚠ Brecha</span>}
                 </div>
               </div>
@@ -283,8 +283,8 @@ function Row({ item, tipo }) {
                   <div style={{fontSize:12,color:"#b45309",marginTop:3}}>Descargá el listado para identificar y escalar los puntos de venta con falla.</div>
                 </div>
                 <button onClick={e=>{e.stopPropagation();descargarCSV(item);}}
-                  style={{display:"flex",alignItems:"center",gap:8,background:"#d97706",color:"#fff",border:"none",borderRadius:8,padding:"9px 18px",fontSize:13,fontWeight:700,cursor:"pointer"}}
-                  onMouseEnter={e=>e.currentTarget.style.background="#b45309"} onMouseLeave={e=>e.currentTarget.style.background="#d97706"}>
+                  style={{display:"flex",alignItems:"center",gap:8,background:"#f97316",color:"#fff",border:"none",borderRadius:8,padding:"9px 18px",fontSize:13,fontWeight:700,cursor:"pointer"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#ea580c"} onMouseLeave={e=>e.currentTarget.style.background="#f97316"}>
                   ⬇ Descargar PDVs fallidos (.csv)
                 </button>
               </div>
@@ -325,10 +325,10 @@ function TabContent({ data, tipo, filtro }) {
     <div>
       <div style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
         <KPICard label="Activos ahora"    value={activos}   accent="#1E6FD9"/>
-        <KPICard label="Con alerta"       value={alertas}   accent={alertas>0?"#d97706":"#16a34a"} sub={alertas>0?"Cobertura incompleta":"Todo OK"}/>
+        <KPICard label="Con alerta"       value={alertas}   accent={alertas>0?"#f97316":"#16a34a"} sub={alertas>0?"Cobertura incompleta":"Todo OK"}/>
         <KPICard label="Programados"      value={programados} accent="#94a3b8" sub="próximos a activar"/>
         <KPICard label="PDVs activos"     value={totalPdvs.toLocaleString("es-AR")} accent="#0ea5e9" sub="recibiendo contenido"/>
-        <KPICard label="Cobertura prom."  value={`${cobProm}%`} accent={cobProm<90?"#d97706":"#16a34a"} sub="sobre activos"/>
+        <KPICard label="Cobertura prom."  value={`${cobProm}%`} accent={cobProm>=90?"#16a34a":cobProm>=60?"#f97316":"#dc2626"} sub="sobre activos"/>
       </div>
 
       <div style={{display:"flex",gap:12,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
@@ -478,7 +478,7 @@ function ResumenSemanal({ userMail }) {
     setTimeout(() => setMailEnviado(false), 3000);
   };
 
-  const colorCobertura = v => v >= 95 ? "#16a34a" : v >= 80 ? "#d97706" : "#dc2626";
+  const colorCobertura = v => v>=90?"#16a34a":v>=60?"#f97316":"#dc2626";
   const bgCobertura    = v => v >= 95 ? "#f0fdf4"  : v >= 80 ? "#fffbeb" : "#fef2f2";
 
   return (
@@ -586,85 +586,60 @@ function ResumenSemanal({ userMail }) {
   );
 }
 
-// ─── CALENDARIO ──────────────────────────────────────────────────────────────
+// ─── CALENDARIO — AGENDA VERTICAL ────────────────────────────────────────────
 const NEGOCIOS = ["Alimentos","Chocolates","Golosinas","Helados","Harinas"];
 const NEGOCIO_COLORES = {
-  "Alimentos":   { bg:"#e0f2fe", border:"#0ea5e9", text:"#0369a1" },
-  "Chocolates":  { bg:"#fce7f3", border:"#ec4899", text:"#9d174d" },
-  "Golosinas":   { bg:"#fef9c3", border:"#eab308", text:"#854d0e" },
-  "Helados":     { bg:"#ede9fe", border:"#8b5cf6", text:"#6d28d9" },
-  "Harinas":     { bg:"#ffedd5", border:"#f97316", text:"#9a3412" },
+  "Alimentos":   { bg:"#e0f2fe", text:"#0369a1" },
+  "Chocolates":  { bg:"#fce7f3", text:"#9d174d" },
+  "Golosinas":   { bg:"#fef9c3", text:"#854d0e" },
+  "Helados":     { bg:"#ede9fe", text:"#6d28d9" },
+  "Harinas":     { bg:"#ffedd5", text:"#9a3412" },
 };
 const ESPACIO_COLORES = {
-  "Landing Tematizada":{ bg:"#f0fdf4", border:"#16a34a", text:"#166534" },
-  "Pop Up":            { bg:"#fce7f3", border:"#ec4899", text:"#9d174d" },
-  "Banner Hero":       { bg:"#ffedd5", border:"#f97316", text:"#9a3412" },
-  "Banner Search":     { bg:"#d1fae5", border:"#10b981", text:"#065f46" },
-  "Banner Cart":       { bg:"#e0f2fe", border:"#38bdf8", text:"#075985" },
-  "Banner Novedades":  { bg:"#f1f5f9", border:"#64748b", text:"#334155" },
-  "Top Bar":           { bg:"#fdf2f8", border:"#d946ef", text:"#86198f" },
+  "Landing Tematizada":{ bg:"#f0fdf4", text:"#166534" },
+  "Pop Up":            { bg:"#fce7f3", text:"#9d174d" },
+  "Banner Hero":       { bg:"#ffedd5", text:"#9a3412" },
+  "Banner Search":     { bg:"#d1fae5", text:"#065f46" },
+  "Banner Cart":       { bg:"#e0f2fe", text:"#075985" },
+  "Banner Novedades":  { bg:"#f1f5f9", text:"#334155" },
+  "Top Bar":           { bg:"#fdf2f8", text:"#86198f" },
 };
 
-// Agregar negocio a las promos
-const PROMOS_CAL = PROMOS.map((p,i) => ({
-  ...p,
-  negocio: NEGOCIOS[i % NEGOCIOS.length]
-}));
+const PROMOS_CAL = PROMOS.map((p,i) => ({ ...p, negocio: NEGOCIOS[i % NEGOCIOS.length] }));
 
 const DIAS_SEMANA_FULL = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
-const DIAS_SEMANA_SHORT = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 
-function addDays(date, days) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d;
-}
-function fmtDate(d) {
-  return d.toISOString().split("T")[0];
-}
-function fmtDiaMes(d) {
-  return `${d.getDate()} ${["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][d.getMonth()]}`;
-}
+function addDays(date, days) { const d = new Date(date); d.setDate(d.getDate() + days); return d; }
+function fmtDate(d) { return d.toISOString().split("T")[0]; }
+function fmtDiaMes(d) { return `${d.getDate()} ${["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][d.getMonth()]}`; }
 
 function itemsEnFecha(fecha) {
   const todos = [
     ...PROMOS_CAL.map(p => ({ ...p, categoria:"promo" })),
     ...BANNERS.map(b => ({ ...b, categoria:"banner", negocio: b.espacio })),
   ];
-  return todos.filter(i => i.inicio <= fecha && i.fin >= fecha);
+  return todos.filter(i => i.inicio <= fecha && i.fin >= fecha)
+    .sort((a,b) => (a.estado==="alerta"?0:a.estado==="activo"?1:2) - (b.estado==="alerta"?0:b.estado==="activo"?1:2));
 }
 
-function ChipItem({ item, onClick }) {
-  const esPromo = item.categoria === "promo";
-  const c = esPromo
-    ? (NEGOCIO_COLORES[item.negocio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" })
-    : (ESPACIO_COLORES[item.espacio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" });
-  return (
-    <div onClick={e => { e.stopPropagation(); onClick && onClick(item); }}
-      style={{fontSize:10,fontWeight:600,color:c.text,background:c.bg,border:`1px solid ${c.border}`,borderRadius:4,padding:"2px 6px",marginBottom:2,cursor:"pointer",overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",maxWidth:"100%"}}>
-      {item.nombre}
-    </div>
-  );
-}
+function colorCobItem(v) { return v>=90?"#16a34a":v>=60?"#f97316":"#94a3b8"; }
 
 function PanelDetalle({ item, onClose }) {
   if (!item) return (
-    <div style={{width:260,background:"#f8fafc",border:"1px dashed #e2e8f0",borderRadius:14,padding:"24px 20px",flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",gap:8,minHeight:200}}>
+    <div style={{width:280,background:"#f8fafc",border:"1px dashed #e2e8f0",borderRadius:14,padding:"24px 20px",flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",gap:8,minHeight:200}}>
       <div style={{fontSize:24}}>👆</div>
       <div style={{fontSize:13,color:"#94a3b8",lineHeight:1.5}}>Hacé click en cualquier ítem para ver el detalle</div>
     </div>
   );
   const esPromo = item.categoria === "promo";
-  const c = esPromo
-    ? (NEGOCIO_COLORES[item.negocio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" })
-    : (ESPACIO_COLORES[item.espacio] || { bg:"#f1f5f9", border:"#94a3b8", text:"#475569" });
+  const c = esPromo ? (NEGOCIO_COLORES[item.negocio]||{bg:"#f1f5f9",text:"#475569"}) : (ESPACIO_COLORES[item.espacio]||{bg:"#f1f5f9",text:"#475569"});
   return (
-    <div style={{width:260,background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:"18px",flexShrink:0}}>
+    <div style={{width:280,background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:"18px",flexShrink:0}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
-        <div style={{fontSize:13,fontWeight:700,color:"#1e293b",lineHeight:1.3,maxWidth:210}}>{item.nombre}</div>
+        <div style={{fontSize:13,fontWeight:700,color:"#1e293b",lineHeight:1.3,maxWidth:220}}>{item.nombre}</div>
         <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:18,lineHeight:1,padding:0}}>×</button>
       </div>
-      <span style={{display:"inline-block",padding:"3px 10px",borderRadius:99,background:c.bg,color:c.text,fontSize:11,fontWeight:700,border:`1px solid ${c.border}`,marginBottom:14}}>
+      <span style={{display:"inline-block",padding:"3px 10px",borderRadius:99,background:c.bg,color:c.text,fontSize:11,fontWeight:700,marginBottom:14}}>
         {esPromo ? item.negocio : item.espacio}
       </span>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
@@ -682,9 +657,7 @@ function PanelDetalle({ item, onClose }) {
           </div>
         ))}
       </div>
-      <div style={{marginTop:14}}>
-        <CoverageBar value={item.cobertura} estado={item.estado}/>
-      </div>
+      <div style={{marginTop:14}}><CoverageBar value={item.cobertura} estado={item.estado}/></div>
     </div>
   );
 }
@@ -696,24 +669,12 @@ function CalendarioActivaciones() {
   const [itemSeleccionado, setItem] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState("todos");
 
-  // ── NAVEGACIÓN ──────────────────────────────────────────────────────────
-  const inicioSemana = (d) => {
-    const day = new Date(d);
-    day.setDate(day.getDate() - day.getDay());
-    return day;
-  };
+  const inicioSemana = (d) => { const day = new Date(d); day.setDate(day.getDate() - day.getDay()); return day; };
 
-  const anterior = () => {
-    if (vista === "semanal") setFechaRef(d => addDays(d, -7));
-    else setFechaRef(d => addDays(d, -1));
-  };
-  const siguiente = () => {
-    if (vista === "semanal") setFechaRef(d => addDays(d, 7));
-    else setFechaRef(d => addDays(d, 1));
-  };
-  const irHoy = () => setFechaRef(HOY);
+  const anterior  = () => setFechaRef(d => addDays(d, vista==="semanal" ? -7 : -1));
+  const siguiente = () => setFechaRef(d => addDays(d, vista==="semanal" ? 7 : 1));
+  const irHoy     = () => setFechaRef(HOY);
 
-  // ── LABEL DEL PERÍODO ───────────────────────────────────────────────────
   const labelPeriodo = () => {
     if (vista === "semanal") {
       const ini = inicioSemana(fechaRef);
@@ -723,190 +684,20 @@ function CalendarioActivaciones() {
     return `${DIAS_SEMANA_FULL[fechaRef.getDay()]}, ${fmtDiaMes(fechaRef)} ${fechaRef.getFullYear()}`;
   };
 
-  // ── FILTRADO ────────────────────────────────────────────────────────────
   const filtrar = (items) => {
     if (filtroTipo === "promos")  return items.filter(i => i.categoria === "promo");
     if (filtroTipo === "banners") return items.filter(i => i.categoria === "banner");
     return items;
   };
 
-  // ── VISTA SEMANAL ───────────────────────────────────────────────────────
-  const diasSemana = Array.from({length:7}, (_,i) => addDays(inicioSemana(fechaRef), i));
-
-  const VistaSemanal = () => (
-    <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
-      {/* Header días */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",borderBottom:"1px solid #e2e8f0"}}>
-        {diasSemana.map((dia,i) => {
-          const esHoy = fmtDate(dia) === fmtDate(HOY);
-          return (
-            <div key={i} onClick={() => { setVista("diaria"); setFechaRef(dia); }}
-              style={{padding:"10px 6px",textAlign:"center",cursor:"pointer",background:esHoy?"#E8F0FE":"transparent",borderRight:i<6?"1px solid #f1f5f9":"none"}}
-              onMouseEnter={e => { if(!esHoy) e.currentTarget.style.background="#f8fafc"; }}
-              onMouseLeave={e => { if(!esHoy) e.currentTarget.style.background="transparent"; }}>
-              <div style={{fontSize:11,fontWeight:600,color:esHoy?"#1E6FD9":"#94a3b8",textTransform:"uppercase",letterSpacing:"0.05em"}}>{DIAS_SEMANA_SHORT[dia.getDay()]}</div>
-              <div style={{fontSize:esHoy?18:16,fontWeight:esHoy?800:400,color:esHoy?"#1E6FD9":"#1e293b",marginTop:2,lineHeight:1}}>
-                {esHoy
-                  ? <span style={{background:"#1E6FD9",color:"#fff",borderRadius:"50%",width:28,height:28,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:14}}>{dia.getDate()}</span>
-                  : dia.getDate()}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Filas por negocio (promos) */}
-      {(filtroTipo === "todos" || filtroTipo === "promos") && (
-        <div style={{borderBottom:"1px solid #f1f5f9"}}>
-          <div style={{padding:"8px 12px",fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",background:"#f8fafc"}}>
-            📦 Promociones por negocio
-          </div>
-          {NEGOCIOS.map(neg => {
-            const c = NEGOCIO_COLORES[neg];
-            const tieneAlgo = diasSemana.some(dia =>
-              itemsEnFecha(fmtDate(dia)).some(i => i.categoria==="promo" && i.negocio===neg)
-            );
-            if (!tieneAlgo) return null;
-            return (
-              <div key={neg} style={{display:"grid",gridTemplateColumns:"80px repeat(7,1fr)",borderBottom:"1px solid #f8fafc",minHeight:36}}>
-                <div style={{padding:"6px 8px",display:"flex",alignItems:"center",borderRight:"1px solid #f1f5f9"}}>
-                  <span style={{fontSize:10,fontWeight:700,color:c.text,background:c.bg,padding:"2px 6px",borderRadius:4,border:`1px solid ${c.border}`}}>{neg}</span>
-                </div>
-                {diasSemana.map((dia,i) => {
-                  const items = itemsEnFecha(fmtDate(dia)).filter(it => it.categoria==="promo" && it.negocio===neg);
-                  return (
-                    <div key={i} style={{padding:"4px",borderRight:i<6?"1px solid #f8fafc":"none",minHeight:36}}>
-                      {items.map(it => <ChipItem key={it.id} item={it} onClick={setItem}/>)}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Filas por tipo de espacio (banners) */}
-      {(filtroTipo === "todos" || filtroTipo === "banners") && (
-        <div>
-          <div style={{padding:"8px 12px",fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",background:"#f8fafc"}}>
-            📢 Espacios publicitarios
-          </div>
-          {Object.keys(ESPACIO_COLORES).map(espacio => {
-            const c = ESPACIO_COLORES[espacio];
-            const tieneAlgo = diasSemana.some(dia =>
-              itemsEnFecha(fmtDate(dia)).some(i => i.categoria==="banner" && i.espacio===espacio)
-            );
-            if (!tieneAlgo) return null;
-            return (
-              <div key={espacio} style={{display:"grid",gridTemplateColumns:"80px repeat(7,1fr)",borderBottom:"1px solid #f8fafc",minHeight:36}}>
-                <div style={{padding:"6px 8px",display:"flex",alignItems:"center",borderRight:"1px solid #f1f5f9"}}>
-                  <span style={{fontSize:10,fontWeight:700,color:c.text,background:c.bg,padding:"2px 6px",borderRadius:4,border:`1px solid ${c.border}`,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:72,display:"block"}}>{espacio}</span>
-                </div>
-                {diasSemana.map((dia,i) => {
-                  const items = itemsEnFecha(fmtDate(dia)).filter(it => it.categoria==="banner" && it.espacio===espacio);
-                  return (
-                    <div key={i} style={{padding:"4px",borderRight:i<6?"1px solid #f8fafc":"none",minHeight:36}}>
-                      {items.map(it => <ChipItem key={it.id} item={it} onClick={setItem}/>)}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-
-  // ── VISTA DIARIA ─────────────────────────────────────────────────────────
-  const VistaDiaria = () => {
-    const fecha = fmtDate(fechaRef);
-    const items = filtrar(itemsEnFecha(fecha));
-    const promos  = items.filter(i => i.categoria === "promo");
-    const banners = items.filter(i => i.categoria === "banner");
-
-    if (items.length === 0) return (
-      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,padding:48,textAlign:"center",color:"#94a3b8",fontSize:14}}>
-        No hay ítems activos para este día.
-      </div>
-    );
-
-    return (
-      <div style={{display:"flex",flexDirection:"column",gap:16}}>
-        {/* Promos por negocio */}
-        {promos.length > 0 && (filtroTipo === "todos" || filtroTipo === "promos") && (
-          <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
-            <div style={{padding:"12px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
-              📦 Promociones <span style={{fontSize:12,color:"#94a3b8",fontWeight:400}}>— {promos.length} activas</span>
-            </div>
-            {NEGOCIOS.map(neg => {
-              const grupo = promos.filter(i => i.negocio === neg);
-              if (!grupo.length) return null;
-              const c = NEGOCIO_COLORES[neg];
-              return (
-                <div key={neg} style={{borderBottom:"1px solid #f8fafc"}}>
-                  <div style={{padding:"8px 18px",background:"#fafbfc",display:"flex",alignItems:"center",gap:8}}>
-                    <span style={{fontSize:11,fontWeight:700,color:c.text,background:c.bg,padding:"2px 8px",borderRadius:4,border:`1px solid ${c.border}`}}>{neg}</span>
-                    <span style={{fontSize:11,color:"#94a3b8"}}>{grupo.length} promo{grupo.length>1?"s":""}</span>
-                  </div>
-                  {grupo.map(it => (
-                    <div key={it.id} onClick={() => setItem(it)}
-                      style={{padding:"10px 18px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",borderBottom:"1px solid #f8fafc"}}
-                      onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
-                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                      <div style={{flex:1}}>
-                        <div style={{fontSize:13,fontWeight:600,color:"#1e293b"}}>{it.nombre}</div>
-                        <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{it.audiencia} · {it.subtipo}</div>
-                      </div>
-                      <div style={{fontSize:12,fontWeight:700,color:it.cobertura===100?"#16a34a":it.cobertura>=85?"#d97706":"#dc2626"}}>
-                        {it.cobertura}%
-                      </div>
-                      <span style={{fontSize:11,color:"#94a3b8"}}>›</span>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Banners por tipo */}
-        {banners.length > 0 && (filtroTipo === "todos" || filtroTipo === "banners") && (
-          <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
-            <div style={{padding:"12px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
-              📢 Espacios publicitarios <span style={{fontSize:12,color:"#94a3b8",fontWeight:400}}>— {banners.length} activos</span>
-            </div>
-            {banners.map(it => {
-              const c = ESPACIO_COLORES[it.espacio] || {bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
-              return (
-                <div key={it.id} onClick={() => setItem(it)}
-                  style={{padding:"12px 18px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",borderBottom:"1px solid #f8fafc"}}
-                  onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <span style={{fontSize:11,fontWeight:700,color:c.text,background:c.bg,padding:"2px 8px",borderRadius:4,border:`1px solid ${c.border}`,whiteSpace:"nowrap"}}>{it.espacio}</span>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:13,fontWeight:600,color:"#1e293b"}}>{it.nombre}</div>
-                    <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{it.audiencia}</div>
-                  </div>
-                  <div style={{fontSize:12,fontWeight:700,color:it.cobertura===100?"#16a34a":it.cobertura>=85?"#d97706":"#dc2626"}}>
-                    {it.cobertura}%
-                  </div>
-                  <span style={{fontSize:11,color:"#94a3b8"}}>›</span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  };
+  const diasMostrar = vista === "semanal"
+    ? Array.from({length:7}, (_,i) => addDays(inicioSemana(fechaRef), i))
+    : [fechaRef];
 
   return (
     <div>
       {/* Controles */}
-      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16,flexWrap:"wrap"}}>
-        {/* Selector de vista */}
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,flexWrap:"wrap"}}>
         <div style={{display:"flex",border:"1px solid #e2e8f0",borderRadius:8,overflow:"hidden"}}>
           {[["semanal","Semana"],["diaria","Día"]].map(([id,label]) => (
             <button key={id} onClick={() => setVista(id)}
@@ -915,14 +706,11 @@ function CalendarioActivaciones() {
             </button>
           ))}
         </div>
-
-        {/* Navegación */}
         <button onClick={anterior} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:8,padding:"7px 14px",cursor:"pointer",fontSize:15,color:"#64748b"}}>‹</button>
         <div style={{fontWeight:700,fontSize:14,color:"#1e293b",minWidth:200,textAlign:"center"}}>{labelPeriodo()}</div>
         <button onClick={siguiente} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:8,padding:"7px 14px",cursor:"pointer",fontSize:15,color:"#64748b"}}>›</button>
         <button onClick={irHoy} style={{background:"#E8F0FE",border:"1px solid #1E6FD9",borderRadius:8,padding:"7px 14px",cursor:"pointer",fontSize:12,fontWeight:600,color:"#1E6FD9"}}>Hoy</button>
 
-        {/* Filtro tipo */}
         <div style={{marginLeft:"auto",display:"flex",gap:6}}>
           {[["todos","Todos"],["promos","Promos"],["banners","Espacios"]].map(([id,label]) => (
             <button key={id} onClick={() => setFiltroTipo(id)}
@@ -933,10 +721,64 @@ function CalendarioActivaciones() {
         </div>
       </div>
 
-      {/* Contenido + panel detalle */}
+      {/* Agenda + panel detalle */}
       <div style={{display:"flex",gap:16,alignItems:"flex-start"}}>
         <div style={{flex:1,minWidth:0}}>
-          {vista === "semanal" ? <VistaSemanal/> : <VistaDiaria/>}
+          {diasMostrar.map((dia, idx) => {
+            const fecha = fmtDate(dia);
+            const items = filtrar(itemsEnFecha(fecha));
+            const esHoy = fecha === fmtDate(HOY);
+            const promosCount = items.filter(i=>i.categoria==="promo").length;
+            const bannersCount = items.filter(i=>i.categoria==="banner").length;
+
+            return (
+              <div key={fecha} style={{marginBottom:28}}>
+                {/* Header del día */}
+                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+                  <div style={{width:38,height:38,borderRadius:"50%",background:esHoy?"#1E6FD9":"#fff",border:`2px solid ${esHoy?"#1E6FD9":"#e2e8f0"}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:15,color:esHoy?"#fff":"#1e293b",flexShrink:0}}>
+                    {dia.getDate()}
+                  </div>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:14,color:"#1e293b"}}>
+                      {esHoy ? "Hoy, " : ""}{DIAS_SEMANA_FULL[dia.getDay()]}
+                    </div>
+                    <div style={{fontSize:11,color:"#94a3b8"}}>
+                      {items.length === 0 ? "Sin actividad" : `${promosCount} promociones · ${bannersCount} espacios`}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Items del día */}
+                {items.length > 0 && (
+                  <div style={{marginLeft:19,paddingLeft:28,borderLeft:"2px solid #e2e8f0"}}>
+                    {items.map(it => {
+                      const esPromo = it.categoria === "promo";
+                      const c = esPromo ? (NEGOCIO_COLORES[it.negocio]||{bg:"#f1f5f9",text:"#475569"}) : (ESPACIO_COLORES[it.espacio]||{bg:"#f1f5f9",text:"#475569"});
+                      const dotColor = it.estado==="alerta" ? "#f97316" : it.estado==="inactivo" ? "#cbd5e1" : "#1E6FD9";
+                      return (
+                        <div key={it.id} onClick={() => setItem(it)}
+                          style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:12,padding:"12px 16px",marginBottom:8,display:"flex",alignItems:"center",gap:12,position:"relative",cursor:"pointer",transition:"border-color 0.15s"}}
+                          onMouseEnter={e=>e.currentTarget.style.borderColor="#1E6FD9"}
+                          onMouseLeave={e=>e.currentTarget.style.borderColor="#e2e8f0"}>
+                          <div style={{position:"absolute",left:-34,top:"50%",transform:"translateY(-50%)",width:10,height:10,borderRadius:"50%",background:dotColor}}/>
+                          <span style={{fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:4,background:c.bg,color:c.text,whiteSpace:"nowrap"}}>
+                            {esPromo ? it.negocio : it.espacio}
+                          </span>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontSize:13,fontWeight:700,color:"#1e293b",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{it.nombre}</div>
+                            <div style={{fontSize:11,color:"#94a3b8",marginTop:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{it.audiencia}</div>
+                          </div>
+                          <div style={{fontSize:13,fontWeight:800,color:colorCobItem(it.cobertura),whiteSpace:"nowrap"}}>
+                            {it.estado==="inactivo" ? "Programada" : `${it.cobertura}%`}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
         <PanelDetalle item={itemSeleccionado} onClose={() => setItem(null)}/>
       </div>
@@ -1160,7 +1002,7 @@ function CoberturaPorDistribuidor() {
   });
 
   const colorFalla = (pct) =>
-    pct === 0 ? "#16a34a" : pct < 30 ? "#d97706" : "#dc2626";
+    pct === 0 ? "#16a34a" : pct < 50 ? "#f97316" : "#dc2626";
   const bgFalla = (pct) =>
     pct === 0 ? "#f0fdf4" : pct < 30 ? "#fffbeb" : "#fef2f2";
   const labelFalla = (pct) =>
