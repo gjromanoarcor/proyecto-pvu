@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.js": "/static/js/main.b72f22eb.js",
-    "index.html": "/index.html",
-    "main.b72f22eb.js.map": "/static/js/main.b72f22eb.js.map"
+    "main.js": "/proyecto-pvu/static/js/main.b72f22eb.js",
+    "index.html": "/proyecto-pvu/index.html",
+    "main.b72f22eb.js.map": "/proyecto-pvu/static/js/main.b72f22eb.js.map"
   },
   "entrypoints": [
     "static/js/main.b72f22eb.js"
