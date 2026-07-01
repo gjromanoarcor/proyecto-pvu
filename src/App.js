@@ -242,8 +242,8 @@ function Row({ item, tipo }) {
       <tr onClick={() => setOpen(!open)} style={{cursor:"pointer",borderBottom:"1px solid #f1f5f9",transition:"background 0.15s"}}
         onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
         <td style={{padding:"14px 16px"}}>
-          <div style={{fontWeight:600,fontSize:14,color:"#1e293b"}}>{item.nombre}</div>
-          <div style={{fontSize:12,color:"#94a3b8",marginTop:3,display:"flex",alignItems:"center",gap:6}}>
+          <div className="row-nombre" style={{fontWeight:600,fontSize:14,color:"#1e293b"}}>{item.nombre}</div>
+          <div className="row-meta" style={{fontSize:12,color:"#94a3b8",marginTop:3,display:"flex",alignItems:"center",gap:6}}>
             <span>{item.id}</span><span style={{color:"#e2e8f0"}}>·</span>
             {tipo==="promo" ? <><TipoBadge tipo={item.tipo}/><span style={{color:"#cbd5e1"}}>·</span><span>{item.subtipo}</span></> : <span style={{fontWeight:500,color:"#1E6FD9"}}>{item.espacio}</span>}
           </div>
@@ -257,7 +257,7 @@ function Row({ item, tipo }) {
           <CoverageBar value={item.cobertura} estado={item.estado}/>
           {item.estado==="alerta" && <div style={{fontSize:11,color:"#f97316",marginTop:4,fontWeight:600}}>⚠ {pdvsFallidos.toLocaleString("es-AR")} PDVs sin cobertura</div>}
         </td>
-        <td style={{padding:"14px 16px",fontSize:12,color:"#94a3b8",textAlign:"right",whiteSpace:"nowrap"}}>
+        <td className="col-hide-mobile" style={{padding:"14px 16px",fontSize:12,color:"#94a3b8",textAlign:"right",whiteSpace:"nowrap"}}>
           <div>{item.fin}</div><div style={{marginTop:2,color:"#cbd5e1"}}>{item.ultimaVerificacion}</div>
         </td>
         <td style={{padding:"14px 16px",textAlign:"center",color:"#cbd5e1",fontSize:14}}>{open?"▲":"▼"}</td>
@@ -389,7 +389,7 @@ function Login({ onLogin }) {
   };
   return (
     <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#E8F0FE 0%,#e0f2fe 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Roboto',system-ui,sans-serif"}}>
-      <div style={{background:"#fff",borderRadius:20,padding:"48px 44px",width:"100%",maxWidth:400,boxShadow:"0 8px 40px rgba(99,102,241,0.10)"}}>
+      <div className="login-card" style={{background:"#fff",borderRadius:20,padding:"48px 44px",width:"100%",maxWidth:400,boxShadow:"0 8px 32px rgba(30,111,217,0.12)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:32}}>
           <div style={{display:"flex",alignItems:"center",gap:4}}><span style={{fontSize:26,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.03em",fontFamily:"Roboto,sans-serif"}}>Tokin</span><span style={{width:8,height:8,borderRadius:"50%",background:"#1E6FD9",display:"inline-block",marginBottom:12}}></span></div>
           <div>
@@ -697,7 +697,7 @@ function CalendarioActivaciones() {
   return (
     <div>
       {/* Controles */}
-      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,flexWrap:"wrap"}}>
+      <div className="cal-controls" style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,flexWrap:"wrap"}}>
         <div style={{display:"flex",border:"1px solid #e2e8f0",borderRadius:8,overflow:"hidden"}}>
           {[["semanal","Semana"],["diaria","Día"]].map(([id,label]) => (
             <button key={id} onClick={() => setVista(id)}
@@ -765,7 +765,7 @@ function CalendarioActivaciones() {
                             {esPromo ? it.negocio : it.espacio}
                           </span>
                           <div style={{flex:1,minWidth:0}}>
-                            <div style={{fontSize:13,fontWeight:700,color:"#1e293b",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{it.nombre}</div>
+                            <div style={{fontSize:13,fontWeight:700,color:"#1e293b",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"calc(100% - 80px)"}}>{it.nombre}</div>
                             <div style={{fontSize:11,color:"#94a3b8",marginTop:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{it.audiencia}</div>
                           </div>
                           <div style={{fontSize:13,fontWeight:800,color:colorCobItem(it.cobertura),whiteSpace:"nowrap"}}>
@@ -864,7 +864,7 @@ function HistorialCampañas() {
                 </div>
 
                 {/* Contenido: cobertura + venta */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0}}>
+                <div className="hist-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0}}>
                   {/* Cobertura PDVs */}
                   <div style={{padding:"16px 20px",borderRight:"1px solid #f1f5f9"}}>
                     <div style={{fontSize:11,fontWeight:700,color:"#64748b",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:12}}>📍 Cobertura de PDVs</div>
@@ -1121,28 +1121,58 @@ function CoberturaPorDistribuidor() {
 const mobileStyles = `
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; padding: 0; overscroll-behavior: none; }
+
   @media (max-width: 768px) {
-    .pvu-header-top    { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 12px 0 0 !important; }
-    .pvu-header-actions{ flex-wrap: wrap !important; gap: 6px !important; }
-    .pvu-header-wrap   { padding: 0 16px !important; }
-    .pvu-tabs          { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 2px !important; scrollbar-width: none !important; }
+    /* Header */
+    .pvu-header-top     { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; padding: 12px 0 0 !important; flex-wrap: nowrap !important; }
+    .pvu-header-wrap    { padding: 0 12px !important; }
+    .pvu-logo-subtitle  { display: none !important; }
+    .pvu-alert-badge    { display: none !important; }
+    .pvu-timestamp      { display: none !important; }
+    .pvu-header-actions { gap: 6px !important; }
+
+    /* Tabs */
+    .pvu-tabs           { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 2px !important; scrollbar-width: none !important; gap: 0 !important; }
     .pvu-tabs::-webkit-scrollbar { display: none !important; }
-    .pvu-content       { padding: 16px !important; }
-    .pvu-filtros       { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; scrollbar-width: none !important; }
+
+    /* Contenido */
+    .pvu-content        { padding: 12px !important; }
+
+    /* Filtros */
+    .pvu-filtros        { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; scrollbar-width: none !important; gap: 6px !important; }
     .pvu-filtros::-webkit-scrollbar { display: none !important; }
-    .pvu-kpis          { flex-direction: column !important; }
-    .pvu-search-row    { flex-direction: column !important; }
-    .pvu-tipo-filtros  { overflow-x: auto !important; flex-wrap: nowrap !important; }
-    .pvu-table-wrap    { overflow-x: auto !important; }
-    .pvu-table         { min-width: 600px !important; }
-    .pvu-alert-badge   { display: none !important; }
-    .pvu-timestamp     { display: none !important; }
-    .notif-panel       { width: calc(100vw - 32px) !important; right: -60px !important; }
-    .pvu-logo-subtitle { display: none !important; }
-    .cal-sidebar       { display: none !important; }
+
+    /* KPIs en columna */
+    .pvu-kpis           { flex-direction: column !important; }
+
+    /* Tablas con scroll horizontal */
+    .pvu-table-wrap     { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    .pvu-table          { min-width: 580px !important; }
+
+    /* Notificaciones */
+    .notif-panel        { width: calc(100vw - 24px) !important; right: -55px !important; max-height: 70vh !important; overflow-y: auto !important; }
+
+    /* Calendario */
+    .cal-sidebar        { display: none !important; }
+    .cal-controls       { flex-wrap: wrap !important; gap: 8px !important; }
+
+    /* Row de tabla mobile — ocultar columnas menos importantes */
+    .col-hide-mobile    { display: none !important; }
+
+    /* Login mobile */
+    .login-card         { padding: 32px 24px !important; margin: 16px !important; width: calc(100% - 32px) !important; max-width: unset !important; }
+    .login-wrap         { align-items: flex-start !important; padding-top: 60px !important; }
+
+    /* Historial grid 2 col → 1 col */
+    .hist-grid          { grid-template-columns: 1fr !important; }
+
+    /* Filas de promos/espacios — nombres largos */
+    .row-nombre         { font-size: 13px !important; }
+    .row-meta           { font-size: 10px !important; flex-wrap: wrap !important; gap: 4px !important; }
   }
+
   @media (min-width: 769px) {
-    .mobile-bottom-nav { display: none !important; }
+    .mobile-bottom-nav  { display: none !important; }
   }
 `;
 
