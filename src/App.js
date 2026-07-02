@@ -323,7 +323,7 @@ function TabContent({ data, tipo, filtro }) {
 
   return (
     <div>
-      <div style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
+      <div className="pvu-kpis" style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
         <KPICard label="Activos ahora"    value={activos}   accent="#1E6FD9"/>
         <KPICard label="Con alerta"       value={alertas}   accent={alertas>0?"#f97316":"#16a34a"} sub={alertas>0?"Cobertura incompleta":"Todo OK"}/>
         <KPICard label="Programados"      value={programados} accent="#94a3b8" sub="próximos a activar"/>
@@ -331,7 +331,7 @@ function TabContent({ data, tipo, filtro }) {
         <KPICard label="Cobertura prom."  value={`${cobProm}%`} accent={cobProm>=90?"#16a34a":cobProm>=60?"#f97316":"#dc2626"} sub="sobre activos"/>
       </div>
 
-      <div style={{display:"flex",gap:12,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
+      <div className="pvu-search-row" style={{display:"flex",gap:12,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
         <div style={{position:"relative",flex:1,minWidth:220}}>
           <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:"#94a3b8",fontSize:15,pointerEvents:"none"}}>🔍</span>
           <input type="text" placeholder={tipo==="promo"?"Buscar por nombre, audiencia o ID...":"Buscar por nombre, espacio o audiencia..."} value={busqueda}
@@ -339,7 +339,7 @@ function TabContent({ data, tipo, filtro }) {
             style={{width:"100%",padding:"9px 12px 9px 36px",border:"1px solid #e2e8f0",borderRadius:10,fontSize:14,color:"#1e293b",background:"#fff",outline:"none",boxSizing:"border-box"}}
             onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
         </div>
-        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+        <div className="pvu-tipo-filtros" style={{display:"flex",gap:6,flexWrap:"wrap"}}>
           {tiposActuales.map(t=>(
             <button key={t} onClick={()=>setTipoFiltro(t)}
               style={{padding:"7px 13px",border:`1px solid ${tipoFiltro===t?"#1E6FD9":"#e2e8f0"}`,borderRadius:8,background:tipoFiltro===t?"#E8F0FE":"#fff",color:tipoFiltro===t?"#1E6FD9":"#64748b",fontSize:13,fontWeight:tipoFiltro===t?600:400,cursor:"pointer",whiteSpace:"nowrap"}}>
@@ -358,8 +358,8 @@ function TabContent({ data, tipo, filtro }) {
         </div>
       )}
 
-      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
+      <div className="pvu-table-wrap" style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+        <table className="pvu-table" style={{width:"100%",borderCollapse:"collapse"}}>
           <thead>
             <tr style={{background:"#f8fafc",borderBottom:"1px solid #e2e8f0"}}>
               {[tipo==="promo"?"Promoción":"Espacio publicitario","Estado","Audiencia","Cobertura PDVs","Vence · Verificado",""].map((h,i)=>(
@@ -1123,56 +1123,68 @@ const mobileStyles = `
   body { margin: 0; padding: 0; overscroll-behavior: none; }
 
   @media (max-width: 768px) {
-    /* Header */
-    .pvu-header-top     { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; padding: 12px 0 0 !important; flex-wrap: nowrap !important; }
+    /* ── Header ── */
+    .pvu-header-top     { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; padding: 10px 0 0 !important; }
     .pvu-header-wrap    { padding: 0 12px !important; }
     .pvu-logo-subtitle  { display: none !important; }
     .pvu-alert-badge    { display: none !important; }
     .pvu-timestamp      { display: none !important; }
     .pvu-header-actions { gap: 6px !important; }
 
-    /* Tabs */
-    .pvu-tabs           { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 2px !important; scrollbar-width: none !important; gap: 0 !important; }
+    /* ── Tabs ── */
+    .pvu-tabs           { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 0 !important; scrollbar-width: none !important; gap: 0 !important; margin-top: 8px !important; }
     .pvu-tabs::-webkit-scrollbar { display: none !important; }
+    .pvu-tabs button    { font-size: 12px !important; padding: 8px 12px !important; white-space: nowrap !important; }
 
-    /* Contenido */
-    .pvu-content        { padding: 12px !important; }
+    /* ── Contenido ── */
+    .pvu-content        { padding: 12px !important; padding-bottom: 80px !important; }
 
-    /* Filtros */
-    .pvu-filtros        { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; scrollbar-width: none !important; gap: 6px !important; }
+    /* ── Filtros de estado ── */
+    .pvu-filtros        { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; scrollbar-width: none !important; gap: 6px !important; margin-bottom: 12px !important; }
     .pvu-filtros::-webkit-scrollbar { display: none !important; }
+    .pvu-filtros button { white-space: nowrap !important; font-size: 12px !important; padding: 5px 12px !important; }
 
-    /* KPIs en columna */
-    .pvu-kpis           { flex-direction: column !important; }
+    /* ── KPIs ── */
+    .pvu-kpis           { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
 
-    /* Tablas con scroll horizontal */
-    .pvu-table-wrap     { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
-    .pvu-table          { min-width: 580px !important; }
+    /* ── Buscador + filtros ── */
+    .pvu-search-row     { flex-direction: column !important; gap: 8px !important; }
+    .pvu-search-row > div:first-child { width: 100% !important; }
+    .pvu-tipo-filtros   { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; scrollbar-width: none !important; width: 100% !important; }
+    .pvu-tipo-filtros::-webkit-scrollbar { display: none !important; }
+    .pvu-tipo-filtros button { white-space: nowrap !important; }
 
-    /* Notificaciones */
-    .notif-panel        { width: calc(100vw - 24px) !important; right: -55px !important; max-height: 70vh !important; overflow-y: auto !important; }
-
-    /* Calendario */
-    .cal-sidebar        { display: none !important; }
-    .cal-controls       { flex-wrap: wrap !important; gap: 8px !important; }
-
-    /* Row de tabla mobile — ocultar columnas menos importantes */
+    /* ── Tabla ── */
+    .pvu-table-wrap     { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 12px !important; }
+    .pvu-table          { min-width: 560px !important; }
     .col-hide-mobile    { display: none !important; }
+    .row-nombre         { font-size: 13px !important; }
+    .row-meta           { font-size: 10px !important; flex-wrap: wrap !important; gap: 3px !important; }
 
-    /* Login mobile */
-    .login-card         { padding: 32px 24px !important; margin: 16px !important; width: calc(100% - 32px) !important; max-width: unset !important; }
-    .login-wrap         { align-items: flex-start !important; padding-top: 60px !important; }
-
-    /* Historial grid 2 col → 1 col */
+    /* ── Historial ── */
     .hist-grid          { grid-template-columns: 1fr !important; }
 
-    /* Filas de promos/espacios — nombres largos */
-    .row-nombre         { font-size: 13px !important; }
-    .row-meta           { font-size: 10px !important; flex-wrap: wrap !important; gap: 4px !important; }
+    /* ── Calendario ── */
+    .cal-sidebar        { display: none !important; }
+    .cal-controls       { flex-wrap: wrap !important; gap: 6px !important; }
+    .cal-controls > div:first-child { order: 1 !important; }
+
+    /* ── Notificaciones ── */
+    .notif-panel        { width: calc(100vw - 24px) !important; right: -55px !important; max-height: 70vh !important; overflow-y: auto !important; }
+
+    /* ── Login ── */
+    .login-wrap         { padding: 20px 0 !important; align-items: flex-start !important; padding-top: 80px !important; }
+    .login-card         { padding: 28px 20px !important; margin: 0 16px !important; width: calc(100% - 32px) !important; max-width: unset !important; border-radius: 16px !important; }
+
+    /* ── Nav inferior ── */
+    .mobile-bottom-nav  { padding-bottom: env(safe-area-inset-bottom, 8px) !important; }
   }
 
+  /* ── Desktop ── */
   @media (min-width: 769px) {
     .mobile-bottom-nav  { display: none !important; }
+    .pvu-content        { padding: 28px 32px !important; }
+    .pvu-kpis           { flex-wrap: wrap !important; }
   }
 `;
 
