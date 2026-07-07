@@ -19,7 +19,7 @@ const USUARIOS = [
 
 // ─── ICONOS SVG ──────────────────────────────────────────────────────────────
 const IconPromo    = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
-const IconEspacio  = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>;
+const IconEspacio  = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>;
 const IconCalendario = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
 const IconHistorial = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
 
@@ -921,9 +921,13 @@ function HistorialCampañas() {
     <div>
       {/* Sub-tabs */}
       <div style={{display:"flex",gap:4,marginBottom:20,borderBottom:"1px solid #e2e8f0",paddingBottom:0}}>
-        {[["promos","🏷 Promociones finalizadas",HISTORIAL_PROMOS.length],["banners","📢 Espacios finalizados",HISTORIAL_BANNERS.length]].map(([id,label,count])=>(
+        {[["promos","Promociones finalizadas",HISTORIAL_PROMOS.length],["banners","Espacios finalizados",HISTORIAL_BANNERS.length]].map(([id,label,count])=>(
           <button key={id} onClick={()=>{setSubTab(id);setBusqueda("");}}
             style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:subTab===id?700:500,color:subTab===id?"#1E6FD9":"#64748b",borderBottom:subTab===id?"2px solid #1E6FD9":"2px solid transparent",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
+            {id==="promos"
+              ? <IconPromo size={15} color={subTab===id?"#1E6FD9":"#64748b"}/>
+              : <IconEspacio size={15} color={subTab===id?"#1E6FD9":"#64748b"}/>
+            }
             {label}
             <span style={{background:subTab===id?"#E8F0FE":"#f1f5f9",color:subTab===id?"#1E6FD9":"#94a3b8",borderRadius:99,padding:"1px 8px",fontSize:11,fontWeight:700}}>{count}</span>
           </button>
@@ -1360,10 +1364,10 @@ function PVU({ user, onLogout }) {
 
   const isMobile = window.innerWidth <= 768;
   const tabs = [
-    { id:"promos",     label:"Promociones", icon:"🎯",  count:PROMOS.length,  desktop:true,  mobile:true  },
-    { id:"banners",    label:"Espacios", icon:"📢",  count:BANNERS.length, desktop:true,  mobile:true  },
-    { id:"calendario", label:"Calendario", icon:"📅",  count:null,            desktop:true,  mobile:false },
-    { id:"historial",  label:"Historial",  icon:"📊",  count:null,            desktop:true,  mobile:true  },
+    { id:"promos",     label:"Promociones", icon:"",  count:PROMOS.length,  desktop:true,  mobile:true  },
+    { id:"banners",    label:"Espacios", icon:"",  count:BANNERS.length, desktop:true,  mobile:true  },
+    { id:"calendario", label:"Calendario", icon:"",  count:null,            desktop:true,  mobile:false },
+    { id:"historial",  label:"Historial",  icon:"",  count:null,            desktop:true,  mobile:true  },
   ];
   const tabsMobile  = tabs.filter(t => t.mobile);
   const tabsDesktop = tabs;
