@@ -1353,10 +1353,10 @@ function PVU({ user, onLogout }) {
 
   const isMobile = window.innerWidth <= 768;
   const tabs = [
-    { id:"promos",     label:"Promociones", icon:"",  count:PROMOS.length,  desktop:true,  mobile:true  },
-    { id:"banners",    label:"Espacios pub.", icon:"",  count:BANNERS.length, desktop:true,  mobile:true  },
-    { id:"calendario", label:"Calendario", icon:"",  count:null,            desktop:true,  mobile:false },
-    { id:"historial",  label:"Historial",  icon:"",  count:null,            desktop:true,  mobile:true  },
+    { id:"promos",     label:"Promociones", icon:"🎯",  count:PROMOS.length,  desktop:true,  mobile:true  },
+    { id:"banners",    label:"Espacios", icon:"📢",  count:BANNERS.length, desktop:true,  mobile:true  },
+    { id:"calendario", label:"Calendario", icon:"📅",  count:null,            desktop:true,  mobile:false },
+    { id:"historial",  label:"Historial",  icon:"📊",  count:null,            desktop:true,  mobile:true  },
   ];
   const tabsMobile  = tabs.filter(t => t.mobile);
   const tabsDesktop = tabs;
