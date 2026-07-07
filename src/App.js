@@ -1353,10 +1353,10 @@ function PVU({ user, onLogout }) {
 
   const isMobile = window.innerWidth <= 768;
   const tabs = [
-    { id:"promos",     label:"Promos",     icon:"🏷",  count:PROMOS.length,  desktop:true,  mobile:true  },
-    { id:"banners",    label:"Espacios",   icon:"📢",  count:BANNERS.length, desktop:true,  mobile:true  },
-    { id:"calendario", label:"Calendario", icon:"📅",  count:null,            desktop:true,  mobile:false },
-    { id:"historial",  label:"Historial",  icon:"📊",  count:null,            desktop:true,  mobile:true  },
+    { id:"promos",     label:"Promociones", icon:"",  count:PROMOS.length,  desktop:true,  mobile:true  },
+    { id:"banners",    label:"Espacios pub.", icon:"",  count:BANNERS.length, desktop:true,  mobile:true  },
+    { id:"calendario", label:"Calendario", icon:"",  count:null,            desktop:true,  mobile:false },
+    { id:"historial",  label:"Historial",  icon:"",  count:null,            desktop:true,  mobile:true  },
   ];
   const tabsMobile  = tabs.filter(t => t.mobile);
   const tabsDesktop = tabs;
@@ -1392,7 +1392,7 @@ function PVU({ user, onLogout }) {
 
           {/* Tabs desktop */}
           <div className="pvu-tabs" style={{display:"flex",gap:4,marginTop:20}}>
-            {tabsDesktop.map(t=>(
+            {(isMobile ? tabsMobile : tabsDesktop).map(t=>(
               <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
                 style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:tab===t.id?700:500,color:tab===t.id?"#1E6FD9":"#64748b",borderBottom:tab===t.id?"2px solid #1E6FD9":"2px solid transparent",transition:"all 0.15s",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
                 {t.icon} {t.label}
