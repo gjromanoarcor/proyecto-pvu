@@ -16,6 +16,13 @@ const USUARIOS = [
   { usuario: "promociones",  password: "promo123", nombre: "Equipo Promociones",  mail: "promociones@tokin.com.ar",  rol: "promo" },
 ];
 
+
+// ─── ICONOS SVG ──────────────────────────────────────────────────────────────
+const IconPromo    = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>;
+const IconEspacio  = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>;
+const IconCalendario = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
+const IconHistorial = ({size=16,color="currentColor"}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
+
 // ─── DATOS MOCK ──────────────────────────────────────────────────────────────
 const PROMOS = [
   { id:"PROMO-001", nombre:"2x1 en Traviata Porteñitas",         tipo:"Más por Menos", subtipo:"2x1",           estado:"activo",   inicio:"2026-06-16", fin:"2026-06-22", audiencia:"Todos los canales (exc. corpo/eess/caden)", pdvsSegmento:8400, pdvsAlcanzados:8400, cobertura:100, ultimaVerificacion:"hace 3 min",  detalle:"2x1 en Traviata C.TOQ Porteñitas 12x3x96g — Harinas" },
@@ -1392,13 +1399,17 @@ function PVU({ user, onLogout }) {
 
           {/* Tabs desktop */}
           <div className="pvu-tabs" style={{display:"flex",gap:4,marginTop:20}}>
-            {(isMobile ? tabsMobile : tabsDesktop).map(t=>(
+            {(isMobile ? tabsMobile : tabsDesktop).map(t=>{
+              const iconColor = tab===t.id?"#1E6FD9":"#64748b";
+              const TabIcon = t.id==="promos"?IconPromo:t.id==="banners"?IconEspacio:t.id==="calendario"?IconCalendario:IconHistorial;
+              return (
               <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
-                style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:tab===t.id?700:500,color:tab===t.id?"#1E6FD9":"#64748b",borderBottom:tab===t.id?"2px solid #1E6FD9":"2px solid transparent",transition:"all 0.15s",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
-                {t.icon} {t.label}
+                style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:tab===t.id?700:500,color:iconColor,borderBottom:tab===t.id?"2px solid #1E6FD9":"2px solid transparent",transition:"all 0.15s",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
+                <TabIcon size={16} color={iconColor}/>
+                {t.label}
                 {t.count!==null && <span style={{background:tab===t.id?"#E8F0FE":"#f1f5f9",color:tab===t.id?"#1E6FD9":"#94a3b8",borderRadius:99,padding:"1px 8px",fontSize:11,fontWeight:700}}>{t.count}</span>}
               </button>
-            ))}
+            );})}
           </div>
         </div>
       </div>
@@ -1429,14 +1440,17 @@ function PVU({ user, onLogout }) {
 
       {/* NAV INFERIOR MOBILE */}
       <div className="mobile-bottom-nav" style={{position:"fixed",bottom:0,left:0,right:0,background:"#fff",borderTop:"1px solid #e2e8f0",display:"flex",zIndex:100}}>
-        {tabsMobile.map(t=>(
+        {tabsMobile.map(t=>{
+          const navColor = tab===t.id?"#1E6FD9":"#94a3b8";
+          const NavIcon = t.id==="promos"?IconPromo:t.id==="banners"?IconEspacio:t.id==="calendario"?IconCalendario:IconHistorial;
+          return (
           <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
             style={{flex:1,padding:"10px 4px 12px",border:"none",background:"transparent",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,position:"relative"}}>
-            <span style={{fontSize:22}}>{t.icon}</span>
-            <span style={{fontSize:10,fontWeight:tab===t.id?700:400,color:tab===t.id?"#1E6FD9":"#94a3b8"}}>{t.label}</span>
+            <NavIcon size={22} color={navColor}/>
+            <span style={{fontSize:10,fontWeight:tab===t.id?700:400,color:navColor}}>{t.label}</span>
             {t.count && <span style={{position:"absolute",top:6,right:"calc(50% - 18px)",background:"#dc2626",color:"#fff",borderRadius:99,fontSize:9,fontWeight:800,minWidth:14,height:14,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 3px"}}>{t.count}</span>}
           </button>
-        ))}
+        );})}
       </div>
     </div>
   );
