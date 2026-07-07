@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/proyecto-pvu/static/js/main.67aa3bca.js",
+    "main.js": "/proyecto-pvu/static/js/main.acc421a9.js",
     "index.html": "/proyecto-pvu/index.html",
-    "main.67aa3bca.js.map": "/proyecto-pvu/static/js/main.67aa3bca.js.map"
+    "main.acc421a9.js.map": "/proyecto-pvu/static/js/main.acc421a9.js.map"
   },
   "entrypoints": [
-    "static/js/main.67aa3bca.js"
+    "static/js/main.acc421a9.js"
   ]
 }
