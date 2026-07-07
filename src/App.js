@@ -1351,21 +1351,24 @@ function PVU({ user, onLogout }) {
     }
   }, []);
 
+  const isMobile = window.innerWidth <= 768;
   const tabs = [
-    { id:"promos",     label:"Promos",     icon:"🏷",  count:PROMOS.length  },
-    { id:"banners",    label:"Espacios",   icon:"📢",  count:BANNERS.length },
-    { id:"calendario", label:"Calendario", icon:"📅",  count:null },
-    { id:"historial",  label:"Historial",  icon:"📊",  count:null },
+    { id:"promos",     label:"Promos",     icon:"🏷",  count:PROMOS.length,  desktop:true,  mobile:true  },
+    { id:"banners",    label:"Espacios",   icon:"📢",  count:BANNERS.length, desktop:true,  mobile:true  },
+    { id:"calendario", label:"Calendario", icon:"📅",  count:null,            desktop:true,  mobile:false },
+    { id:"historial",  label:"Historial",  icon:"📊",  count:null,            desktop:true,  mobile:true  },
   ];
+  const tabsMobile  = tabs.filter(t => t.mobile);
+  const tabsDesktop = tabs;
   const filtros = [{id:"todos",label:"Todos"},{id:"activo",label:"Activos"},{id:"inactivo",label:"Programados"}];
 
   return (
     <div style={{minHeight:"100vh",background:"#F5F5F5",fontFamily:"'Roboto',system-ui,sans-serif",paddingBottom:64}}>
 
       {/* HEADER */}
-      <div style={{background:"#fff",borderBottom:"1px solid #e2e8f0",padding:"0 32px",position:"sticky",top:0,zIndex:50}}>
+      <div style={{background:"#fff",borderBottom:"1px solid #e2e8f0",padding:isMobile?"0 12px":"0 32px",position:"sticky",top:0,zIndex:50}}>
         <div className="pvu-header-wrap" style={{maxWidth:1200,margin:"0 auto"}}>
-          <div className="pvu-header-top" style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 0 0"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:isMobile?"10px 0 0":"20px 0 0",gap:8}}>
 
             <div style={{display:"flex",alignItems:"center",gap:12}}>
               <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}><span style={{fontSize:22,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.03em",fontFamily:"Roboto,sans-serif"}}>Tokin</span><span style={{width:8,height:8,borderRadius:"50%",background:"#1E6FD9",display:"inline-block",marginBottom:10}}></span></div>
@@ -1375,7 +1378,7 @@ function PVU({ user, onLogout }) {
               </div>
             </div>
 
-            <div className="pvu-header-actions" style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:isMobile?6:10,flexShrink:0}}>
               
               
               <CampanaNotificaciones alertas={alertas} onMarcarLeida={marcarLeida} onMarcarTodas={marcarTodas} userMail={user.mail}/>
@@ -1389,7 +1392,7 @@ function PVU({ user, onLogout }) {
 
           {/* Tabs desktop */}
           <div className="pvu-tabs" style={{display:"flex",gap:4,marginTop:20}}>
-            {tabs.map(t=>(
+            {tabsDesktop.map(t=>(
               <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
                 style={{padding:"10px 20px",border:"none",background:"transparent",cursor:"pointer",fontSize:14,fontWeight:tab===t.id?700:500,color:tab===t.id?"#1E6FD9":"#64748b",borderBottom:tab===t.id?"2px solid #1E6FD9":"2px solid transparent",transition:"all 0.15s",display:"flex",alignItems:"center",gap:8,whiteSpace:"nowrap"}}>
                 {t.icon} {t.label}
@@ -1401,7 +1404,7 @@ function PVU({ user, onLogout }) {
       </div>
 
       {/* CONTENIDO */}
-      <div className="pvu-content" style={{maxWidth:1200,margin:"0 auto",padding:"28px 32px"}}>
+      <div style={{maxWidth:1200,margin:"0 auto",padding:isMobile?"12px 12px 80px":"28px 32px"}}>
         {tab!=="calendario" && tab!=="alertas" && tab!=="historial" && tab!=="distribuidores" && (
           <div className="pvu-filtros" style={{display:"flex",gap:8,marginBottom:20}}>
             {filtros.map(f=>(
@@ -1426,7 +1429,7 @@ function PVU({ user, onLogout }) {
 
       {/* NAV INFERIOR MOBILE */}
       <div className="mobile-bottom-nav" style={{position:"fixed",bottom:0,left:0,right:0,background:"#fff",borderTop:"1px solid #e2e8f0",display:"flex",zIndex:100}}>
-        {tabs.filter(t=>!t.mobileHide).map(t=>(
+        {tabsMobile.map(t=>(
           <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
             style={{flex:1,padding:"10px 4px 12px",border:"none",background:"transparent",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,position:"relative"}}>
             <span style={{fontSize:22}}>{t.icon}</span>
