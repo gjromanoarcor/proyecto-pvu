@@ -234,6 +234,69 @@ function CampanaNotificaciones({ alertas, onMarcarLeida, onMarcarTodas, userMail
 }
 
 // ─── ROW ─────────────────────────────────────────────────────────────────────
+function CardMobile({ item, tipo }) {
+  const [open, setOpen] = useState(false);
+  const pdvsFallidos = item.pdvsSegmento - item.pdvsAlcanzados;
+  const cobColor = item.cobertura>=90?"#16a34a":item.cobertura>=60?"#f97316":"#dc2626";
+  const cobBg    = item.cobertura>=90?"#f0fdf4":item.cobertura>=60?"#fff7ed":"#fef2f2";
+  return (
+    <div style={{background:"#fff",border:`1.5px solid ${open?"#1E6FD9":"#e2e8f0"}`,borderRadius:14,marginBottom:10,overflow:"hidden"}}>
+      <div onClick={()=>setOpen(!open)} style={{padding:"14px 16px",cursor:"pointer"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontWeight:700,fontSize:15,color:"#1e293b",lineHeight:1.3}}>{item.nombre}</div>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginTop:5,flexWrap:"wrap"}}>
+              <Badge estado={item.estado}/>
+              {tipo==="promo" ? <TipoBadge tipo={item.tipo}/> : <span style={{fontSize:11,fontWeight:700,color:"#1E6FD9",background:"#E8F0FE",padding:"2px 8px",borderRadius:4}}>{item.espacio}</span>}
+            </div>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
+            <span style={{fontSize:18,fontWeight:800,color:cobColor}}>{item.cobertura}%</span>
+            <span style={{fontSize:10,color:"#94a3b8"}}>{open?"▲":"▼"}</span>
+          </div>
+        </div>
+        <div style={{marginTop:10}}>
+          <CoverageBar value={item.cobertura} estado={item.estado}/>
+        </div>
+        <div style={{fontSize:12,color:"#64748b",marginTop:6}}>{item.audiencia} · {item.pdvsSegmento.toLocaleString("es-AR")} PDVs</div>
+      </div>
+      {open && (
+        <div style={{padding:"14px 16px",borderTop:"1px solid #f1f5f9",background:"#fafbff"}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
+            {[
+              ["PDVs audiencia", item.pdvsSegmento.toLocaleString("es-AR")],
+              ["PDVs alcanzados", item.pdvsAlcanzados.toLocaleString("es-AR")],
+              ["Vigencia", `${item.inicio}`],
+              ["Vence", item.fin],
+            ].map(([l,v])=>(
+              <div key={l}>
+                <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.05em"}}>{l}</div>
+                <div style={{fontSize:13,fontWeight:600,color:"#1e293b",marginTop:2}}>{v}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{fontSize:12,color:"#64748b",marginBottom:12,lineHeight:1.5}}>{item.detalle}</div>
+          {item.estado==="alerta" && (
+            <div style={{background:"#fffbeb",border:"1px solid #fde68a",borderRadius:10,padding:"12px 14px",marginBottom:8}}>
+              <div style={{fontWeight:700,color:"#92400e",fontSize:13,marginBottom:6}}>⚠ {pdvsFallidos.toLocaleString("es-AR")} PDVs sin cobertura</div>
+              <button onClick={e=>{e.stopPropagation();descargarCSV(item);}}
+                style={{width:"100%",background:"#f97316",color:"#fff",border:"none",borderRadius:8,padding:"10px",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                ⬇ Descargar PDVs fallidos (.csv)
+              </button>
+            </div>
+          )}
+          {item.cobertura===100 && item.estado==="activo" && (
+            <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:10,padding:"10px 14px",display:"flex",gap:8,alignItems:"center"}}>
+              <span>✅</span>
+              <div style={{fontSize:12,color:"#166534",fontWeight:600}}>Cobertura completa en los {item.pdvsAlcanzados.toLocaleString("es-AR")} PDVs</div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Row({ item, tipo }) {
   const [open, setOpen] = useState(false);
   const pdvsFallidos = item.pdvsSegmento - item.pdvsAlcanzados;
@@ -242,8 +305,8 @@ function Row({ item, tipo }) {
       <tr onClick={() => setOpen(!open)} style={{cursor:"pointer",borderBottom:"1px solid #f1f5f9",transition:"background 0.15s"}}
         onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
         <td style={{padding:"14px 16px"}}>
-          <div className="row-nombre" style={{fontWeight:600,fontSize:14,color:"#1e293b"}}>{item.nombre}</div>
-          <div className="row-meta" style={{fontSize:12,color:"#94a3b8",marginTop:3,display:"flex",alignItems:"center",gap:6}}>
+          <div style={{fontWeight:600,fontSize:14,color:"#1e293b"}}>{item.nombre}</div>
+          <div style={{fontSize:12,color:"#94a3b8",marginTop:3,display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
             <span>{item.id}</span><span style={{color:"#e2e8f0"}}>·</span>
             {tipo==="promo" ? <><TipoBadge tipo={item.tipo}/><span style={{color:"#cbd5e1"}}>·</span><span>{item.subtipo}</span></> : <span style={{fontWeight:500,color:"#1E6FD9"}}>{item.espacio}</span>}
           </div>
@@ -274,7 +337,6 @@ function Row({ item, tipo }) {
                   {item.pdvsAlcanzados.toLocaleString("es-AR")}{item.estado==="alerta"&&<span style={{marginLeft:6,fontSize:12}}>⚠ Brecha</span>}
                 </div>
               </div>
-              <div><div style={{fontSize:11,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.07em"}}>Última verificación</div><div style={{fontSize:14,color:"#1e293b",marginTop:2}}>{item.ultimaVerificacion}</div></div>
             </div>
             {item.estado==="alerta" && (
               <div style={{marginTop:20,background:"#fffbeb",border:"1px solid #fde68a",borderRadius:10,padding:"14px 18px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
@@ -358,7 +420,15 @@ function TabContent({ data, tipo, filtro }) {
         </div>
       )}
 
-      <div className="pvu-table-wrap" style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+      {/* Mobile: cards */}
+      <div className="pvu-cards-mobile">
+        {filtered.length===0
+          ? <div style={{padding:48,textAlign:"center",color:"#94a3b8",fontSize:14}}>No hay ítems con este filtro.</div>
+          : filtered.map(item=><CardMobile key={item.id} item={item} tipo={tipo}/>)
+        }
+      </div>
+      {/* Desktop: tabla */}
+      <div className="pvu-table-wrap pvu-table-desktop" style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
         <table className="pvu-table" style={{width:"100%",borderCollapse:"collapse"}}>
           <thead>
             <tr style={{background:"#f8fafc",borderBottom:"1px solid #e2e8f0"}}>
@@ -388,37 +458,57 @@ function Login({ onLogin }) {
     if(u){onLogin(u);}else{setError("Usuario o contraseña incorrectos.");}
   };
   return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#E8F0FE 0%,#e0f2fe 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Roboto',system-ui,sans-serif"}}>
-      <div className="login-card" style={{background:"#fff",borderRadius:20,padding:"48px 44px",width:"100%",maxWidth:400,boxShadow:"0 8px 32px rgba(30,111,217,0.12)"}}>
-        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:32}}>
-          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={{fontSize:26,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.03em",fontFamily:"Roboto,sans-serif"}}>Tokin</span><span style={{width:8,height:8,borderRadius:"50%",background:"#1E6FD9",display:"inline-block",marginBottom:12}}></span></div>
+    <div style={{minHeight:"100vh",minHeight:"100dvh",background:"linear-gradient(135deg,#E8F0FE 0%,#dbeafe 100%)",display:"flex",flexDirection:"column",justifyContent:"center",fontFamily:"'Roboto',system-ui,sans-serif",padding:"0 16px"}}>
+      <div style={{background:"#fff",borderRadius:20,padding:"40px 28px",width:"100%",maxWidth:420,margin:"0 auto",boxShadow:"0 8px 32px rgba(30,111,217,0.12)"}}>
+        
+        {/* Logo */}
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:32}}>
           <div>
-            <div style={{fontSize:17,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>Panel de Verdad Única</div>
-            <div style={{fontSize:12,color:"#94a3b8"}}>Acceso interno</div>
+            <div style={{fontSize:22,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.02em"}}>Tokin<span style={{display:"inline-block",width:7,height:7,borderRadius:"50%",background:"#1E6FD9",marginLeft:2,marginBottom:8}}></span></div>
+            <div style={{fontSize:13,color:"#1e293b",fontWeight:700,marginTop:-4}}>Panel de Verdad Única</div>
+            <div style={{fontSize:11,color:"#94a3b8"}}>Acceso interno</div>
           </div>
         </div>
+
+        {/* Campos */}
         <div style={{marginBottom:16}}>
-          <label style={{fontSize:13,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Usuario</label>
-          <input type="text" value={usuario} onChange={e=>{setUsuario(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleSubmit()} placeholder="Tu usuario"
-            style={{width:"100%",padding:"11px 14px",border:`1px solid ${error?"#fca5a5":"#e2e8f0"}`,borderRadius:10,fontSize:14,color:"#1e293b",outline:"none",boxSizing:"border-box"}}
-            onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
+          <label style={{fontSize:14,fontWeight:600,color:"#374151",display:"block",marginBottom:8}}>Usuario</label>
+          <input type="text" value={usuario}
+            onChange={e=>{setUsuario(e.target.value);setError("");}}
+            onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
+            placeholder="Tu usuario"
+            style={{width:"100%",padding:"14px 16px",border:`1.5px solid ${error?"#fca5a5":"#e2e8f0"}`,borderRadius:12,fontSize:16,color:"#1e293b",outline:"none",boxSizing:"border-box",WebkitAppearance:"none"}}
+            onFocus={e=>e.target.style.borderColor="#1E6FD9"}
+            onBlur={e=>e.target.style.borderColor=error?"#fca5a5":"#e2e8f0"}/>
         </div>
+
         <div style={{marginBottom:8}}>
-          <label style={{fontSize:13,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Contraseña</label>
+          <label style={{fontSize:14,fontWeight:600,color:"#374151",display:"block",marginBottom:8}}>Contraseña</label>
           <div style={{position:"relative"}}>
-            <input type={verPass?"text":"password"} value={password} onChange={e=>{setPassword(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleSubmit()} placeholder="Tu contraseña"
-              style={{width:"100%",padding:"11px 40px 11px 14px",border:`1px solid ${error?"#fca5a5":"#e2e8f0"}`,borderRadius:10,fontSize:14,color:"#1e293b",outline:"none",boxSizing:"border-box"}}
-              onFocus={e=>e.target.style.borderColor="#1E6FD9"} onBlur={e=>e.target.style.borderColor="#e2e8f0"}/>
-            <button onClick={()=>setVerPass(!verPass)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:15}}>{verPass?"🙈":"👁"}</button>
+            <input type={verPass?"text":"password"} value={password}
+              onChange={e=>{setPassword(e.target.value);setError("");}}
+              onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
+              placeholder="Tu contraseña"
+              style={{width:"100%",padding:"14px 48px 14px 16px",border:`1.5px solid ${error?"#fca5a5":"#e2e8f0"}`,borderRadius:12,fontSize:16,color:"#1e293b",outline:"none",boxSizing:"border-box",WebkitAppearance:"none"}}
+              onFocus={e=>e.target.style.borderColor="#1E6FD9"}
+              onBlur={e=>e.target.style.borderColor=error?"#fca5a5":"#e2e8f0"}/>
+            <button onClick={()=>setVerPass(!verPass)}
+              style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:18,padding:0,display:"flex",alignItems:"center"}}>
+              {verPass?"🙈":"👁"}
+            </button>
           </div>
         </div>
-        {error&&<div style={{fontSize:13,color:"#dc2626",fontWeight:500,marginBottom:12,padding:"8px 12px",background:"#fef2f2",borderRadius:8,border:"1px solid #fecaca"}}>{error}</div>}
+
+        {error && (
+          <div style={{fontSize:13,color:"#dc2626",fontWeight:500,marginBottom:12,padding:"10px 14px",background:"#fef2f2",borderRadius:10,border:"1px solid #fecaca"}}>
+            {error}
+          </div>
+        )}
+
         <button onClick={handleSubmit}
-          style={{width:"100%",padding:"12px",background:"#1E6FD9",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",marginTop:8}}
-          onMouseEnter={e=>e.currentTarget.style.opacity="0.9"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+          style={{width:"100%",padding:"16px",background:"#1E6FD9",color:"#fff",border:"none",borderRadius:12,fontSize:16,fontWeight:700,cursor:"pointer",marginTop:12,WebkitAppearance:"none"}}>
           Ingresar
         </button>
-
       </div>
     </div>
   );
@@ -526,7 +616,7 @@ function ResumenSemanal({ userMail }) {
 
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
         {/* Nuevos */}
-        <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+        <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
           <div style={{padding:"14px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
             <span style={{fontSize:16}}>✅</span> Activados esta semana
           </div>
@@ -544,7 +634,7 @@ function ResumenSemanal({ userMail }) {
         </div>
 
         {/* Vencidos */}
-        <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+        <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
           <div style={{padding:"14px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
             <span style={{fontSize:16}}>⏰</span> Vencidos esta semana
           </div>
@@ -564,7 +654,7 @@ function ResumenSemanal({ userMail }) {
       </div>
 
       {/* Alertas críticas */}
-      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+      <div style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
         <div style={{padding:"14px 18px",borderBottom:"1px solid #f1f5f9",fontWeight:700,fontSize:14,color:"#1e293b",display:"flex",alignItems:"center",gap:8}}>
           <span style={{fontSize:16}}>⚠</span> Alertas de la semana
         </div>
@@ -843,13 +933,13 @@ function HistorialCampañas() {
 
       {/* ── PROMOS ── */}
       {subTab==="promos" && (
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div className="hist-lista" style={{display:"flex",flexDirection:"column",gap:12,width:"100%"}}>
           {filtrarPromos.map(item => {
             const nc = NEGOCIO_C[item.negocio]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
             const cc = colorCob(item.cobertura);
             const bc = bgCob(item.cobertura);
             return (
-              <div key={item.id} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+              <div key={item.id} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
                 {/* Header card */}
                 <div style={{padding:"14px 20px",borderBottom:"1px solid #f1f5f9",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
                   <div style={{flex:1}}>
@@ -916,13 +1006,13 @@ function HistorialCampañas() {
 
       {/* ── BANNERS ── */}
       {subTab==="banners" && (
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div className="hist-lista" style={{display:"flex",flexDirection:"column",gap:12,width:"100%"}}>
           {filtrarBanners.map(item => {
             const ec = ESPACIO_C[item.espacio]||{bg:"#f1f5f9",border:"#94a3b8",text:"#475569"};
             const cc = colorCob(item.cobertura);
             const bc = bgCob(item.cobertura);
             return (
-              <div key={item.id} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden"}}>
+              <div key={item.id} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:14,overflow:"hidden",width:"100%",boxSizing:"border-box"}}>
                 {/* Header */}
                 <div style={{padding:"14px 20px",borderBottom:"1px solid #f1f5f9",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
                   <div style={{flex:1}}>
@@ -1123,13 +1213,18 @@ const mobileStyles = `
   body { margin: 0; padding: 0; overscroll-behavior: none; }
 
   @media (max-width: 768px) {
+    .pvu-cards-mobile    { display: block !important; }
+    .pvu-table-desktop   { display: none !important; }
     /* ── Header ── */
-    .pvu-header-top     { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; padding: 10px 0 0 !important; }
-    .pvu-header-wrap    { padding: 0 12px !important; }
+    .pvu-header-top     { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; padding: 10px 0 0 !important; flex-wrap: nowrap !important; overflow: hidden !important; }
+    .pvu-header-wrap    { padding: 0 12px !important; overflow: hidden !important; }
     .pvu-logo-subtitle  { display: none !important; }
     .pvu-alert-badge    { display: none !important; }
     .pvu-timestamp      { display: none !important; }
-    .pvu-header-actions { gap: 6px !important; }
+    .pvu-header-actions { gap: 6px !important; flex-shrink: 0 !important; }
+    .pvu-header-title   { font-size: 13px !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 120px !important; }
+    .pvu-title-desktop  { display: none !important; }
+    .pvu-title-mobile   { display: inline !important; font-size: 18px !important; font-weight: 800 !important; }
 
     /* ── Tabs ── */
     .pvu-tabs           { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 0 !important; scrollbar-width: none !important; gap: 0 !important; margin-top: 8px !important; }
@@ -1137,7 +1232,7 @@ const mobileStyles = `
     .pvu-tabs button    { font-size: 12px !important; padding: 8px 12px !important; white-space: nowrap !important; }
 
     /* ── Contenido ── */
-    .pvu-content        { padding: 12px !important; padding-bottom: 80px !important; }
+    .pvu-content        { padding: 12px !important; padding-bottom: 80px !important; box-sizing: border-box !important; width: 100% !important; overflow-x: hidden !important; }
 
     /* ── Filtros de estado ── */
     .pvu-filtros        { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; scrollbar-width: none !important; gap: 6px !important; margin-bottom: 12px !important; }
@@ -1163,6 +1258,8 @@ const mobileStyles = `
 
     /* ── Historial ── */
     .hist-grid          { grid-template-columns: 1fr !important; }
+    .hist-card          { width: 100% !important; box-sizing: border-box !important; }
+    .hist-lista         { width: 100% !important; box-sizing: border-box !important; padding: 0 !important; }
 
     /* ── Calendario ── */
     .cal-sidebar        { display: none !important; }
@@ -1183,6 +1280,9 @@ const mobileStyles = `
   /* ── Desktop ── */
   @media (min-width: 769px) {
     .mobile-bottom-nav  { display: none !important; }
+    .pvu-cards-mobile   { display: none !important; }
+    .pvu-table-desktop  { display: block !important; }
+    .pvu-title-mobile   { display: none !important; }
     .pvu-content        { padding: 28px 32px !important; }
     .pvu-kpis           { flex-wrap: wrap !important; }
   }
@@ -1270,8 +1370,8 @@ function PVU({ user, onLogout }) {
             <div style={{display:"flex",alignItems:"center",gap:12}}>
               <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}><span style={{fontSize:22,fontWeight:800,color:"#1E6FD9",letterSpacing:"-0.03em",fontFamily:"Roboto,sans-serif"}}>Tokin</span><span style={{width:8,height:8,borderRadius:"50%",background:"#1E6FD9",display:"inline-block",marginBottom:10}}></span></div>
               <div>
-                <div style={{fontSize:18,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>Panel de Verdad Única</div>
-                <div className="pvu-logo-subtitle" style={{fontSize:12,color:"#94a3b8"}}>Estado en tiempo real</div>
+                <span className="pvu-title-mobile" style={{fontSize:15,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>PVU</span><span className="pvu-title-desktop" style={{fontSize:16,fontWeight:800,color:"#1e293b",letterSpacing:"-0.02em"}}>Panel de Verdad Única</span>
+                <div className="pvu-logo-subtitle" style={{fontSize:12,color:"#94a3b8"}}>Panel de Verdad Única</div>
               </div>
             </div>
 
@@ -1326,7 +1426,7 @@ function PVU({ user, onLogout }) {
 
       {/* NAV INFERIOR MOBILE */}
       <div className="mobile-bottom-nav" style={{position:"fixed",bottom:0,left:0,right:0,background:"#fff",borderTop:"1px solid #e2e8f0",display:"flex",zIndex:100}}>
-        {tabs.map(t=>(
+        {tabs.filter(t=>!t.mobileHide).map(t=>(
           <button key={t.id} onClick={()=>{setTab(t.id);setFiltro("todos");}}
             style={{flex:1,padding:"10px 4px 12px",border:"none",background:"transparent",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,position:"relative"}}>
             <span style={{fontSize:22}}>{t.icon}</span>
